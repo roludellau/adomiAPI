@@ -5,7 +5,8 @@ const sequelize = new Sequelize('a_do_mi', 'root', '', {
     port: 3306, //port mysql
     dialect:"mysql",
     define: {
-        timestamps: false
+        timestamps: false,
+        freezeTableName: true
     }
 })
 

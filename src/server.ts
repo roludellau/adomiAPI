@@ -30,7 +30,7 @@ const init = async () => {
         },
         {
             method: 'POST',
-            path: '/users',
+            path: '/customers',
             handler: (request: Request, h: ResponseToolkit) => {
                 return User.queryTransaction(request, User.addUser)
             }

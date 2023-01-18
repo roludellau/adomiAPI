@@ -1,8 +1,9 @@
 import {sequelize, DataTypes} from '../dbconfig/db.js'
 import {Request, ResponseToolkit } from "@hapi/hapi";
+import Core from './Core'
 import Crypto from 'crypto'
 
-export default class User {
+export default class User extends Core{
 
     static UserModel = sequelize.define('user', {
         id: {
@@ -16,6 +17,12 @@ export default class User {
         },
         firstname: {
             type: DataTypes.STRING,
+        },
+        username: {
+            type: DataTypes.STRING,
+        },
+        password: {
+            type: DataTypes.STRING(1234),
         },
         phone: {
             type: DataTypes.INTEGER,
@@ -35,9 +42,6 @@ export default class User {
         city: {
             type: DataTypes.STRING,
         }
-    }, 
-    {
-        tableName: 'user'
     })
 
     static CustomerModel = sequelize.define('customer', {
@@ -46,21 +50,12 @@ export default class User {
             primaryKey: true,
             unique: true
         },
-        username: {
-            type: DataTypes.STRING,
-        },
-        password: {
-            type: DataTypes.STRING(1234),
-        },
         id_Agency : {
             type: DataTypes.INTEGER,
         },
         id_Employee  : {
             type: DataTypes.INTEGER,
         },
-    },
-    {
-        tableName: 'customer'
     })
 
     static {
@@ -68,46 +63,36 @@ export default class User {
         this.CustomerModel.belongsTo(this.UserModel, {foreignKey: 'id'})
     }
 
-    static async queryTransaction (request: Request, query: (request: Request) => Promise<any>) {
-        const t = await sequelize.transaction()
-        try {
-          return query(request)
-        }
-        catch (error){
-          await t.rollback()
-          throw error
-        }
-    }
 
     static getAllUsers(): Promise<any[]> {
         return User.UserModel.findAll()
     }
-    
+
     static async addUser(request:any): Promise<any> {
         let data = request.query
         let existingUser = await User.UserModel.findOne({ where: { firstname: data.firstname,  lastname: data.lastname } })
         if (!existingUser){
-            return (
-                User.UserModel.create({
+            const firstQuery = await User.UserModel.create({
                     lastname : data.lastname,
                     firstname : data.firstname,
+                    username : data.username,
+                    password : Crypto.createHash('md5').update(data.password).digest('hex'),
                     phone : data.phone,
                     mail : data.mail,
                     street_name : data.street_name,
                     street_number : data.street_number,
                     post_code : data.post_code,
                     city : data.city
-                }).then((inserted) => {
-                    let lastId = inserted.dataValues.id
-                    User.CustomerModel.create({
-                        id : lastId,
-                        username : data.username,
-                        password : Crypto.createHash('md5').update(data.password).digest('hex'),
-                        id_Agency : data.id_Agency,
-                        id_Employee : data.id_Employee,
-                    }).then(inserted2 => inserted2)
                 })
-            )
+                const lastId = firstQuery.dataValues.id
+                const secondQuery = await User.CustomerModel.create({
+                    id : lastId,
+                    id_Agency : data.id_Agency,
+                    id_Employee : data.id_Employee,
+                })
+                const createdUser = firstQuery.dataValues
+                const createdCustomer = secondQuery.dataValues
+                return {createdUser, createdCustomer}
         } else {
             return 'existing'
         }
