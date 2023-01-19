@@ -2,21 +2,21 @@
   "development": {
     "username": "root",
     "password": null,
-    "database": "database_development",
+    "database": "a_do_mi",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
     "password": null,
-    "database": "database_test",
+    "database": "a_do_mi",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
     "password": null,
-    "database": "database_production",
+    "database": "a_do_mi",
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
