@@ -46,6 +46,9 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
+      },
+      roleId: {
+        type: Sequelize.INTEGER
       }
     });
   },
