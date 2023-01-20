@@ -7,12 +7,16 @@ class mainController {
 
 
     static queryTransaction = async(req: Request) => {
-        
-        //let test = await userModel.findAll()
-        console.log(db)
-        return true
+        const t = await db.default.sequelize.transaction()
+        try {
+            return await userModel.findAll()
+        }
+        catch (error) {
+            await t.rollback()
+            console.log(error)
+            throw (error)
+        }
     }
-
     
 }
 

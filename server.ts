@@ -1,9 +1,11 @@
 'use strict';
 
 const Hapi = require('@hapi/hapi');
-import { ResponseToolkit } from "hapi";
+import { Request, ResponseToolkit } from "hapi";
 //on importe la fonction getAllUsers depuis le fichier userController
 const userController = require("./controllers/userController");
+const {getAllAgencies} = require("./controllers/agencyController")
+const mainController = require('./controllers/mainController')
 
 const init = async () => {
 
@@ -11,12 +13,13 @@ const init = async () => {
         port: 3000,
         host: 'localhost'
     });
+    
 
     server.route({
         method: 'GET',
         path: '/',
-        handler: () => {
-            return userController.getAllUsers()
+        handler: (request: Request, h: ResponseToolkit) => {
+            return mainController.queryTransaction()
         }
     });
 
@@ -26,6 +29,14 @@ const init = async () => {
         handler: (request: Request, h :ResponseToolkit) => {
             return 'oui'
         }
+    })
+
+
+    //routes pour les agences
+    server.route({
+        method:'GET',
+        path:'/agencies',
+        handler: getAllAgencies
     })
 
     await server.start();

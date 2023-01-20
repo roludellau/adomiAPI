@@ -15,6 +15,11 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
+
+// cet appel permet de synchroniser la base de donnee au models creer, 
+// cela permet de creer les differentes tables intermediaires automatiquement grace aux associations
+// sequelize.sync()
+
 fs
   .readdirSync(__dirname)
   .filter((file: string) => {
