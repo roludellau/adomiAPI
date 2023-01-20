@@ -20,7 +20,10 @@ module.exports = (sequelize:any , DataTypes:any) => {
 
     static associate(models:any) {
       // define association here
-      Customer.hasOne(models.User)
+      models.User.hasOne(Customer)
+      Customer.belongsTo(models.User)
+      
+      
     }
   }
   Customer.init({

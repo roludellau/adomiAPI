@@ -4,9 +4,8 @@ const userModel = db.default.User
 
 const getAllUsers = async(req: Request) => {
 
-    let test = await userModel.findAll()
-
-    return true
+    let users = await userModel.findAll()
+    return users
 }
 
 
