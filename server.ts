@@ -1,11 +1,9 @@
 'use strict';
 
-import { ResponseToolkit } from "hapi";
-
-
 const Hapi = require('@hapi/hapi');
+import { ResponseToolkit } from "hapi";
 //on importe la fonction getAllUsers depuis le fichier userController
-const { getAllUsers } = require("./controllers/userController");
+const userController = require("./controllers/userController");
 
 const init = async () => {
 
@@ -17,7 +15,9 @@ const init = async () => {
     server.route({
         method: 'GET',
         path: '/',
-        handler: getAllUsers
+        handler: () => {
+            return userController.getAllUsers()
+        }
     });
 
     server.route({

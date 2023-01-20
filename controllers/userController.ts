@@ -1,14 +1,31 @@
+export {}
 const db = require('../models/index')
-// apres avoir require db, on recupere le model qu'on souhaite
+
+//const BigSequelize  = db.default.Sequelize
+const sequelize = db.default.sequelize
 const userModel = db.default.User
 
-const getAllUsers = async(req: Request) => {
 
-    let test = await userModel.findAll()
 
-    return true
+class userController {
+
+
+    static getAllUsers = async (req: Request) => {
+        const t = await sequelize.transaction()
+        try {
+            let test = await userModel.findAll() 
+            return test
+        } 
+        catch (error) {
+            throw (error)
+            await t.rollback();
+        }
+    }
+
+    
 }
 
 
 
-export = {getAllUsers}
+
+module.exports = userController
