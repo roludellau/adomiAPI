@@ -19,6 +19,7 @@
     "handlebars": "^4.7.7",
     "hapi-geo-locate": "^4.1.1",
     "mysql2": "^3.0.1",
+    "nodemon": "^2.0.20",
     "sequelize": "^6.28.0"
   },
   "devDependencies": {
