@@ -22,8 +22,6 @@ module.exports = (sequelize:any , DataTypes:any) => {
       // define association here
       models.User.hasOne(Customer)
       Customer.belongsTo(models.User)
-      
-      
     }
   }
   Customer.init({

@@ -20,7 +20,6 @@ module.exports = (sequelize: any, DataTypes: { STRING: any; }) => {
     adress!:string;
     static associate(models: any) {
       // define association here
-
       Agency.belongsToMany(models.User, {through:'Agency_employee'})
     }
   }
