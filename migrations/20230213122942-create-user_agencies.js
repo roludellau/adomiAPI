@@ -5,7 +5,6 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     await queryInterface.createTable('user_agencies',{
       idUser:{
-        primaryKey:true,
         allowNull:false,
         type:Sequelize.INTEGER,
         references:{
@@ -16,7 +15,6 @@ module.exports = {
         }
       },
       idAgency:{
-        primaryKey:true,
         allowNull:false,
         type:Sequelize.INTEGER,
         references:{

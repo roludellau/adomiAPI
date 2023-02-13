@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      start_date: {
+      startDate: {
         type: Sequelize.DATEONLY
       },
       startHour: {
