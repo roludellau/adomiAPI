@@ -9,11 +9,21 @@ const config = require(__dirname + '/../config/config.json')[env];
 const db: any = {};
 
 let sequelize: any;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
+try {
+  if (config.use_env_variable) {
+    sequelize = new Sequelize(process.env[config.use_env_variable], config);
+  } else {
+    sequelize = new Sequelize(config.database, config.username, config.password, config);
+  }
+} catch (err){
+    throw err
 }
+
+
+
+// cet appel permet de synchroniser la base de donnee au models creer, 
+// cela permet de creer les differentes tables intermediaires automatiquement grace aux associations
+// sequelize.sync()
 
 fs
   .readdirSync(__dirname)

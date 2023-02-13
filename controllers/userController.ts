@@ -1,14 +1,21 @@
 const db = require('../models/index')
-// apres avoir require db, on recupere le model qu'on souhaite
+import { Request, ResponseToolkit } from "hapi";
+const sequelize = db.default.sequelize
 const userModel = db.default.User
 
-const getAllUsers = async(req: Request) => {
+export default class UserController {
 
-    let test = await userModel.findAll()
 
-    return true
+    static getAllUsers = async (request: Request, h: ResponseToolkit) => {
+        const t = await sequelize.transaction()
+        try {
+            const users = await userModel.findAll()
+            return users
+        } 
+        catch (err) {
+            await t.rollback()
+            throw err
+        }
+    }
 }
 
-
-
-export = {getAllUsers}

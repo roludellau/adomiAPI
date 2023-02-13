@@ -7,6 +7,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        onDelete:'CASCADE',
         type: Sequelize.INTEGER
       },
       firstName: {
@@ -39,6 +40,9 @@ module.exports = {
       city: {
         type: Sequelize.STRING
       },
+      roleId: {
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -47,9 +51,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      roleId: {
-        type: Sequelize.INTEGER
-      }
     });
   },
   async down(queryInterface, Sequelize) {
