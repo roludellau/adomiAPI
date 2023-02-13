@@ -1,31 +1,21 @@
-export {}
 const db = require('../models/index')
-
-//const BigSequelize  = db.default.Sequelize
+import { Request, ResponseToolkit } from "hapi";
 const sequelize = db.default.sequelize
 const userModel = db.default.User
 
+export default class UserController {
 
 
-class userController {
-
-
-    static getAllUsers = async (req: Request) => {
+    static getAllUsers = async (request: Request, h: ResponseToolkit) => {
         const t = await sequelize.transaction()
         try {
-            let test = await userModel.findAll() 
-            return test
+            const users = await userModel.findAll()
+            return users
         } 
-        catch (error) {
-            throw (error)
-            await t.rollback();
+        catch (err) {
+            await t.rollback()
+            throw err
         }
     }
-
-    
 }
 
-
-
-
-module.exports = userController

@@ -1,10 +1,13 @@
 const db = require('../models/index')
 const AgencyModel = db.default.Agency
 
+export default class AgencyController {
 
-const getAllAgencies = async () =>{
-     let agencies = await AgencyModel.findAll()
-     return agencies
+     static getAllAgencies = async () =>{
+          let agencies = await AgencyModel.findAll()
+          return agencies
+     }
+
 }
 
-export {getAllAgencies}
+

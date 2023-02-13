@@ -1,27 +1,24 @@
 'use strict';
 
-const Hapi = require('@hapi/hapi');
-import { Request, ResponseToolkit } from "hapi";
+const Hapi = require('@hapi/hapi')
+import {Request, ResponseToolkit} from '@hapi/hapi'
 //on importe la fonction getAllUsers depuis le fichier userController
-const userController = require("./controllers/userController");
-const {getAllAgencies} = require("./controllers/agencyController")
-const mainController = require('./controllers/mainController')
+import UserController from './controllers/userController'
+import AgencyController from './controllers/agencyController'
 
 const init = async () => {
 
     const server = Hapi.server({
         port: 3000,
         host: 'localhost'
-    });
+    })
     
 
     server.route({
         method: 'GET',
         path: '/',
-        handler: (request: Request, h: ResponseToolkit) => {
-            return mainController.queryTransaction()
-        }
-    });
+        handler: UserController.getAllUsers
+    })
 
     server.route({
         method: 'GET',
@@ -36,17 +33,17 @@ const init = async () => {
     server.route({
         method:'GET',
         path:'/agencies',
-        handler: getAllAgencies
+        handler: AgencyController.getAllAgencies
     })
 
     await server.start();
     console.log('Server running on %s', server.info.uri);
-};
+}
 
 process.on('unhandledRejection', (err) => {
-    console.log(err);
-    process.exit(1);
-});
+    console.log(err)
+    process.exit(1)
+})
 
-init();
+init()
 
