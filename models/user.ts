@@ -39,6 +39,9 @@ module.exports = (sequelize: any, DataTypes:any ) => {
       User.belongsTo(models.User_Role, {
         as: 'role'
       })
+      User.hasOne(models.agency, {
+        as: 'agency'
+      })
     }
   }
   User.init({
