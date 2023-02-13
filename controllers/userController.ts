@@ -3,9 +3,9 @@ const db = require('../models/index')
 const userModel = db.default.User
 
 const getAllUsers = async(req: Request) => {
-    console.log(db.default.User)
+
     let test = await userModel.findAll()
-    console.log('quelque chose',test)
+
     return true
 }
 

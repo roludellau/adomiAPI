@@ -1,7 +1,9 @@
 'use strict';
+
 import {
   Model
 } from 'sequelize';
+
 interface CustomerAttributes{
   customerID:number;
 }
@@ -18,6 +20,7 @@ module.exports = (sequelize:any , DataTypes:any) => {
 
     static associate(models:any) {
       // define association here
+      Customer.hasOne(models.User)
     }
   }
   Customer.init({
