@@ -10,6 +10,8 @@ export default class UserController {
         const t = await sequelize.transaction()
         try {
             const users = await userModel.findAll()
+            console.log(users);
+            
             return users
         } 
         catch (err) {

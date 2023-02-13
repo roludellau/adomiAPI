@@ -5,6 +5,7 @@ import {Request, ResponseToolkit} from '@hapi/hapi'
 //on importe la fonction getAllUsers depuis le fichier userController
 import UserController from './controllers/userController'
 import AgencyController from './controllers/agencyController'
+import CustomerController from './controllers/customerController'
 
 const init = async () => {
 
@@ -27,6 +28,23 @@ const init = async () => {
             return 'oui'
         }
     })
+
+    //routes pour les customers
+    server.route([{
+        method: 'GET',
+        path: '/customers',
+        handler: CustomerController.getAllCustomers
+    },
+
+    {
+        method: 'GET',
+        path: '/customers/{id}',
+        handler: (request: { params: { id: number; }; }, h: any) =>{
+
+            return CustomerController.getOneCustomer(request.params.id)
+        }
+
+    }])
 
 
     //routes pour les agences
