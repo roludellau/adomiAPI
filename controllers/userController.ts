@@ -17,5 +17,7 @@ export default class UserController {
             throw err
         }
     }
+
+
 }
 

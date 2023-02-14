@@ -3,9 +3,14 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('user_agency',{
-      idUser:{
+    await queryInterface.createTable('carer_has_availabilities', {
+      id: {
         primaryKey:true,
+        allowNull:false,
+        autoIncrement: true,
+        type:Sequelize.INTEGER,
+      },
+      idCarer:{
         allowNull:false,
         type:Sequelize.INTEGER,
         references:{
@@ -15,21 +20,20 @@ module.exports = {
           key:'id'
         }
       },
-      idAgency:{
-        primaryKey:true,
+      idAvailability:{
         allowNull:false,
         type:Sequelize.INTEGER,
         references:{
           model:{
-            tableName:'agencies'
+            tableName:'availabilities'
           },
           key:'id'
         }
-      }
+      },
     })
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('user_agency');
+    await queryInterface.dropTable('carer_has_availabilities');
   }
 };
