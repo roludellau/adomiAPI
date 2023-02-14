@@ -3,7 +3,8 @@ import {Request, ResponseToolkit} from '@hapi/hapi'
 
 
 const jwtParams = {
-    keys: async () => fs.readFile('./key/key.txt'),
+    //keys: async () => fs.readFile('../key/key.txt'),
+    keys: 'IceTea',
     verify: {
         aud: 'api.adomi.fr',
         iss: 'api.adomi.fr',
@@ -14,7 +15,6 @@ const jwtParams = {
         timeSkewSec: 15
     },
     validate: (artifacts:any, request: Request, h: ResponseToolkit) => {
-        console.log(artifacts)
         return {
             isValid: true,
             credentials: { user: artifacts.decoded.payload }

@@ -15,6 +15,7 @@ const init = async () => {
 
     await server.register(Jwt);
     server.auth.strategy('jwt_strategy', 'jwt', jwtParams)
+    server.auth.default('jwt_strategy');
 
 
     //USER
@@ -22,13 +23,13 @@ const init = async () => {
         {
             method: 'GET',
             path: '/sign-in',
-            //options: {auth: 'jwt_strategy'},
+            options: {auth: false},
             handler: UserController.signIn
         },
         {
             method: 'GET',
-            path: '/',
-            handler: UserController.getAllUsers
+            path: '/users/{id}',
+            handler: UserController.getUserInfo
         },
     ])
 
