@@ -9,7 +9,7 @@ module.exports = {
       type: 'foreign key',
       name:'user-role-association',
       references: {
-        table: 'user_Roles',
+        table: 'user_roles',
         field: 'id'
       }
     })
