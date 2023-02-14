@@ -9,7 +9,8 @@ module.exports = {
         firstName: 'John',
         lastName: 'Doe',
         email: 'example@example.com',
-        password:'pwdtest',
+        //pwdtest
+        password:'$argon2i$v=19$m=16,t=2,p=1$MTIzNDU2Nzg$86yZubj6lQo11awuQi+j5g',
         userName:'johndoeusername',
         phone:'0610101010',
         street_name:'rue Jean Jaures',
@@ -23,7 +24,8 @@ module.exports = {
         firstName: 'Edouard',
         lastName: 'Murlepert',
         email: 'EdMur@caramail.fr',
-        password:'Mdp1234*',
+        //Mdp1234*
+        password:'$argon2i$v=19$m=16,t=2,p=1$MTIzNDU2Nzg$1jZr6vFLXQK3qPg/K35Low',
         userName:'edouard.murlepert',
         phone:'0645117832',
         street_name:'rue des plomberies',
@@ -37,7 +39,8 @@ module.exports = {
         firstName: 'Marie',
         lastName: 'Droupeter',
         email: 'Marie333@gmail.com',
-        password:'bliyvfh35!',
+        //bliyvfh35!
+        password:'$argon2i$v=19$m=16,t=2,p=1$MTIzNDU2Nzg$x6QsANDDhAUvQRhcR8EF4A',
         userName:'marie.Ddoupeter',
         phone:'0746007730',
         street_name:'Avenue de la chasse',
@@ -59,4 +62,4 @@ module.exports = {
      */
     return queryInterface.bulkDelete('users', null, {});
   }
-};
+}

@@ -22,7 +22,6 @@ module.exports = (sequelize: any, DataTypes: { INTEGER: any; STRING: any; }) => 
 
   }
   Recurence.init({
-    id: DataTypes.INTEGER,
     recurence_type: DataTypes.STRING
   }, {
     sequelize,

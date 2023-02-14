@@ -1,10 +1,10 @@
 'use strict';
-
 const Hapi = require('@hapi/hapi')
 import {Request, ResponseToolkit} from '@hapi/hapi'
-//on importe la fonction getAllUsers depuis le fichier userController
 import UserController from './controllers/userController'
 import AgencyController from './controllers/agencyController'
+import Jwt from '@hapi/jwt';
+import jwtParams from './middlewares/auth'
 
 const init = async () => {
 
@@ -13,11 +13,26 @@ const init = async () => {
         host: 'localhost'
     })
 
-    server.route({
-        method: 'GET',
-        path: '/',
-        handler: UserController.getAllUsers
-    })
+    await server.register(Jwt);
+    server.auth.strategy('jwt_strategy', 'jwt', jwtParams)
+
+
+    //USER
+    server.route([
+        {
+            method: 'GET',
+            path: '/sign-in',
+            //options: {auth: 'jwt_strategy'},
+            handler: UserController.signIn
+        },
+        {
+            method: 'GET',
+            path: '/',
+            handler: UserController.getAllUsers
+        },
+    ])
+
+
 
     server.route({
         method: 'GET',
@@ -27,13 +42,15 @@ const init = async () => {
         }
     })
 
-
     //routes pour les agences
     server.route({
         method:'GET',
         path:'/agencies',
         handler: AgencyController.getAllAgencies
     })
+
+
+
 
     await server.start();
     console.log('Server running on %s', server.info.uri);
