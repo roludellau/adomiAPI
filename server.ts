@@ -12,7 +12,6 @@ const init = async () => {
         port: 3000,
         host: 'localhost'
     })
-    
 
     server.route({
         method: 'GET',
