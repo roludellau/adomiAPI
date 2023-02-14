@@ -13,27 +13,16 @@ module.exports = {
       idClient:{
         allowNull:false,
         type:Sequelize.INTEGER,
-        references:{
-          model:{
-            tableName:'users'
-          },
-          key:'id'
-        }
       },
       idEmployee:{
         allowNull:false,
         type:Sequelize.INTEGER,
-        references:{
-          model:{
-            tableName:'users'
-          },
-          key:'id'
-        }
       },
     })
   },
 
   async down (queryInterface, Sequelize) {
     await queryInterface.dropTable('client_has_referent');
+
   }
 };
