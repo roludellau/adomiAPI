@@ -10,7 +10,6 @@ const {
 module.exports = (sequelize: any, DataTypes: { INTEGER: any; DATE: any; TIME: any; STRING: any; BOOLEAN: any; }) => {
   class Mission extends Model {
 
-    id!: number
     startDate!: string
     startHour!: string
     endHour!: string
@@ -21,7 +20,7 @@ module.exports = (sequelize: any, DataTypes: { INTEGER: any; DATE: any; TIME: an
     validated!: boolean
 
     static associate(models: any) {
-      Mission.HasOne(models.Recurence, {
+      Mission.hasOne(models.Recurence, {
         as: 'recurence'
       })
     }
@@ -29,7 +28,6 @@ module.exports = (sequelize: any, DataTypes: { INTEGER: any; DATE: any; TIME: an
 
 
   Mission.init({
-    id: DataTypes.INTEGER,
     startDate: DataTypes.DATE,
     startHour: DataTypes.TIME,
     endHour: DataTypes.TIME,

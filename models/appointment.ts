@@ -6,6 +6,7 @@ const {
 } = require('sequelize');
 
 module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any; INTEGER: any; }) => {
+
   class Appointment extends Model {
     
     date!: string
@@ -17,10 +18,10 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
     city!:string
     
     static associate(models: any) {
-      Appointment.HasOne(models.user, {
+      Appointment.hasOne(models.User, {
         as: 'carer'
       })
-      Appointment.HasOne(models.Mission, {
+      Appointment.hasOne(models.Mission, {
         as: 'mission'
       })
     }

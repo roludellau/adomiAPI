@@ -39,7 +39,7 @@ module.exports = (sequelize: any, DataTypes:any ) => {
       User.belongsTo(models.User_Role, {
         as: 'role'
       })
-      User.hasOne(models.agency, {
+      User.hasOne(models.Agency, {
         as: 'agency'
       })
     }
