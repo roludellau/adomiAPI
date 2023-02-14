@@ -1,3 +1,5 @@
 node_modules/
 build/
-config/
+config/*
+config/config.json
+config.json
