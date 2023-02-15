@@ -65,7 +65,6 @@ export default class UserController {
     }
 
     static getUserInfo = async (request: Request, h: ResponseToolkit) => {
-
         let auth = request.auth
         console.log(auth)
         
@@ -82,9 +81,36 @@ export default class UserController {
             await t.rollback()
             throw err
         }
-        
     }
 
+    static createUser = async (request: Request, h: ResponseToolkit) => {
+        const t = await sequelize.transaction()
+        let password = 'mySuperSecretPassword'
+        let hash = await argon2.hash(password)
+        console.log(hash)
+        try {
+            const user = await userModel.create({
+                firstName: 'Théo',
+                lastName: 'Sokoczolchkosvitchsky',
+                email: '10xEngi@neer.com',
+                password: hash,
+                userName: 'theo.soko',
+                phone: '0710203040',
+                street_name: 'rue de la grange',
+                street_number: 7,
+                post_code: '78420',
+                city: 'Crouleville',
+                idRole: 2,
+                idAgency: 1
+            })
+            return user
+        }
+        catch (err) {
+            await t.rollback()
+            console.log(err)
+        }
+        
+    }
 
 }
 

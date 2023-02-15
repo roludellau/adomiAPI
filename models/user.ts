@@ -1,5 +1,6 @@
 'use strict';
 import {
+  ForeignKeyConstraintError,
   Model
 } from 'sequelize';
 
@@ -37,10 +38,12 @@ module.exports = (sequelize: any, DataTypes:any ) => {
     static associate(models: any) {
       // define association here
       User.belongsTo(models.User_Role, {
-        as: 'role'
+        as: 'role',
+        foreignKey: 'idRole'
       })
-      User.hasOne(models.Agency, {
-        as: 'agency'
+      User.belongsTo(models.Agency, {
+        as: 'agency',
+        foreignKey: 'idAgency'
       })
     }
   }
