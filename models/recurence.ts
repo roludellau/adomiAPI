@@ -26,6 +26,7 @@ module.exports = (sequelize: any, DataTypes: { INTEGER: any; STRING: any; }) => 
   }, {
     sequelize,
     modelName: 'Recurence',
+    tableName: 'recurences'
   });
   return Recurence;
 };

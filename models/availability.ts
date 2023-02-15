@@ -31,6 +31,7 @@ module.exports = (sequelize: any, DataTypes: { NUMBER: any; TIME: any; }) => {
   }, {
     sequelize,
     modelName: 'Availability',
+    tableName: 'availabilities'
   });
   return Availability;
 };

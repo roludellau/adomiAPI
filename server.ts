@@ -6,6 +6,7 @@ import AgencyController from './controllers/agencyController'
 import CustomerController from './controllers/customerController';
 import Jwt from '@hapi/jwt';
 import jwtParams from './middlewares/auth'
+import EmployeeController from './controllers/employeeController';
 
 const init = async () => {
 
@@ -36,6 +37,31 @@ const init = async () => {
             method: 'POST',
             path: '/user/new',
             handler: UserController.createUser
+        }
+    ])
+
+
+    //EMPLOYEE
+    server.route([
+        {
+            method:'GET',
+            path:'/employees',
+            handler: EmployeeController.getAllEmployees
+        },
+        {
+            method:'GET',
+            path:'/employees/{idEmployee}',
+            handler: EmployeeController.getEmployeeById
+        },
+        {
+            method:'GET',
+            path:'/employees/agency/{idAgency}',
+            handler: EmployeeController.getEmployeesFromAgencyId
+        },
+        {
+            method:'POST',
+            path:'/employees',
+            handler: EmployeeController.addEmployee
         }
     ])
 
