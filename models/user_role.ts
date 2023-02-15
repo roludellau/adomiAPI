@@ -14,10 +14,11 @@ module.exports = (sequelize: any, DataTypes: { STRING: any; }) => {
     }
   }
   User_Role.init({
-    libelle: DataTypes.STRING
+    label: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'User_Role',
+    tableName: 'user_roles'
   });
   return User_Role;
 };

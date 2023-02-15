@@ -4,7 +4,12 @@
     "password": "",
     "database": "a_do_mi",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "define":{
+      "timestamps": false
+    }
+    
+
   },
   "test": {
     "username": "root",

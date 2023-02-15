@@ -3,6 +3,7 @@ const Hapi = require('@hapi/hapi')
 import {Request, ResponseToolkit} from '@hapi/hapi'
 import UserController from './controllers/userController'
 import AgencyController from './controllers/agencyController'
+import CustomerController from './controllers/customerController';
 import Jwt from '@hapi/jwt';
 import jwtParams from './middlewares/auth'
 
@@ -15,7 +16,7 @@ const init = async () => {
 
     await server.register(Jwt);
     server.auth.strategy('jwt_strategy', 'jwt', jwtParams)
-    server.auth.default('jwt_strategy');
+    // server.auth.default('jwt_strategy');
 
 
     //USER
@@ -31,6 +32,11 @@ const init = async () => {
             path: '/users/{id}',
             handler: UserController.getUserInfo
         },
+        {
+            method: 'POST',
+            path: '/user/new',
+            handler: UserController.createUser
+        }
     ])
 
 
@@ -50,8 +56,17 @@ const init = async () => {
         handler: AgencyController.getAllAgencies
     })
 
-
-
+    //Routes Customers
+    server.route([{
+        method: 'GET',
+        path:'/customers',
+        handler: CustomerController.getAllCustomers
+    },
+    {
+        method: 'GET',
+        path:'/customer/{id}',
+        handler: CustomerController.getOneCustomer
+    }])
 
     await server.start();
     console.log('Server running on %s', server.info.uri);
