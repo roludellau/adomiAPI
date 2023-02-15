@@ -37,10 +37,12 @@ module.exports = (sequelize: any, DataTypes:any ) => {
     static associate(models: any) {
       // define association here
       User.belongsTo(models.User_Role, {
-        as: 'role'
+        as: 'role',
+        foreignKey:'idRole'
       })
-      User.hasOne(models.Agency, {
-        as: 'agency'
+      User.belongsTo(models.Agency, {
+        as: 'agency',
+        foreignKey:'idAgency'
       })
     }
   }
@@ -58,7 +60,8 @@ module.exports = (sequelize: any, DataTypes:any ) => {
   }, {
     sequelize,
     modelName: 'User',
-    tableName: 'users'
+    tableName: 'users',
+    timestamps:false
   });
   return User;
 };
