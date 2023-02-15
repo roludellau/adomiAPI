@@ -47,6 +47,7 @@ export default class UserController {
         let username = request.query.username
         let password = request.query.password
         const t = await sequelize.transaction()
+        
         try {
             const user = await userModel.findOne({
                 attributes: ['id', 'firstName', 'lastname', 'email', 'password'],
@@ -58,6 +59,7 @@ export default class UserController {
         }
         catch (err) {
             await t.rollback()
+            console.log(err)
             throw err
         }
     }

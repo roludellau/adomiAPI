@@ -18,6 +18,7 @@ module.exports = (sequelize: any, DataTypes: { STRING: any; }) => {
   }, {
     sequelize,
     modelName: 'User_Role',
+    tableName: 'user_roles'
   });
   return User_Role;
 };

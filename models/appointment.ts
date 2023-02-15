@@ -37,6 +37,7 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
   }, {
     sequelize,
     modelName: 'Appointment',
+    tableName: 'appointments'
   });
   return Appointment;
 };
