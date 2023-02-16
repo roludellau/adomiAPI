@@ -32,11 +32,6 @@ const init = async () => {
             method: 'GET',
             path: '/users/{id}',
             handler: UserController.getUserInfo
-        },
-        {
-            method: 'POST',
-            path: '/user/new',
-            handler: UserController.createUser
         }
     ])
 
@@ -83,16 +78,49 @@ const init = async () => {
     })
 
     //Routes Customers
-    server.route([{
-        method: 'GET',
-        path:'/customers',
-        handler: CustomerController.getAllCustomers
-    },
-    {
-        method: 'GET',
-        path:'/customer/{id}',
-        handler: CustomerController.getOneCustomer
-    }])
+    server.route([
+        {
+            method: 'GET',
+            path:'/customers',
+            handler: CustomerController.getAllCustomers
+        },
+        
+        {
+            method: 'POST',
+            path: '/customers',
+            handler: CustomerController.createCustomer
+        },
+
+        {
+            method: 'GET',
+            path:'/customers/{id}',
+            handler: CustomerController.getOneCustomer
+        },
+
+        {
+            method: 'PATCH',
+            path:'/customers/{id}',
+            handler: CustomerController.updateCustomer
+        },
+
+        {
+            method: 'DELETE',
+            path:'/customer/{id}',
+            handler: CustomerController.deleteCustomer
+        }, 
+        
+        {
+            method: 'GET',
+            path:'/customers/{id}/agencies',
+            handler: CustomerController.getCustomerAgency
+        },
+
+        {
+            method: 'GET',
+            path:'/customers/{id}/carers',
+            handler: CustomerController.getCustomerCarers
+        }
+    ])
 
     await server.start();
     console.log('Server running on %s', server.info.uri);

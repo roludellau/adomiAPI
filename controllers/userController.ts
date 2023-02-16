@@ -5,7 +5,6 @@ import * as fs from 'fs/promises';
 const db = require('../models/index')
 const sequelize = db.default.sequelize
 const userModel = db.default.User
-const userRole = db.default.User_Role
 
 export default class UserController {
 
@@ -82,40 +81,6 @@ export default class UserController {
         catch (err) {
             await t.rollback()
             throw err
-        }
-        
-    }
-
-    static createUser = async (request: Request, h: ResponseToolkit)=>{
-
-        const t = await sequelize.transaction();
-        const userpassword = await argon2.hash(request.query.password[0]);
-
-        try{
-            const test =  await userModel.create({
-                firstName: request.query.firstName,
-                lastName: request.query.lastName,
-                email: request.query.email,
-                password: userpassword,
-                userName: request.query.userName,
-                phone: request.query.phone,
-                street_name: request.query.street_name,
-                street_number: request.query.street_number,
-                post_code: request.query.poste_code,
-                city: request.query.city,
-                idRole: request.params.idRole,
-                idAgency: request.query.idAgency
-    
-            });
-            console.log(test);
-            return test
-            
-            // await t.commit();
-        }
-        catch(err){
-            // console.log(request.query)
-            console.log(err);
-            throw err;
         }
         
     }
