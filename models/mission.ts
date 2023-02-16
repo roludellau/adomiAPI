@@ -20,8 +20,14 @@ module.exports = (sequelize: any, DataTypes: { INTEGER: any; DATE: any; TIME: an
     validated!: boolean
 
     static associate(models: any) {
+
       Mission.hasOne(models.Recurence, {
         as: 'recurence'
+      })
+
+      Mission.belongsTo(models.User, {
+        as: 'carer',
+        foreignKey: 'idCarer'
       })
     }
   }

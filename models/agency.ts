@@ -29,7 +29,8 @@ module.exports = (sequelize: any, DataTypes: { STRING: any; }) => {
   }, {
     sequelize,
     modelName: 'Agency',
-    tableName: 'agencies'
+    tableName: 'agencies',
+    timestamps: false
   });
   return Agency;
 };

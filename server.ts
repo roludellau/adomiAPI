@@ -3,6 +3,7 @@ const Hapi = require('@hapi/hapi')
 import {Request, ResponseToolkit} from '@hapi/hapi'
 import UserController from './controllers/userController'
 import AgencyController from './controllers/agencyController'
+import CustomerController from './controllers/customerController';
 import Jwt from '@hapi/jwt';
 import jwtParams from './middlewares/auth'
 import EmployeeController from './controllers/employeeController';
@@ -31,7 +32,7 @@ const init = async () => {
             method: 'GET',
             path: '/users/{id}',
             handler: UserController.getUserInfo
-        },
+        }
     ])
 
 
@@ -76,8 +77,50 @@ const init = async () => {
         handler: AgencyController.getAllAgencies
     })
 
+    //Routes Customers
+    server.route([
+        {
+            method: 'GET',
+            path:'/customers',
+            handler: CustomerController.getAllCustomers
+        },
+        
+        {
+            method: 'POST',
+            path: '/customers',
+            handler: CustomerController.createCustomer
+        },
 
+        {
+            method: 'GET',
+            path:'/customers/{id}',
+            handler: CustomerController.getOneCustomer
+        },
 
+        {
+            method: 'PATCH',
+            path:'/customers/{id}',
+            handler: CustomerController.updateCustomer
+        },
+
+        {
+            method: 'DELETE',
+            path:'/customer/{id}',
+            handler: CustomerController.deleteCustomer
+        }, 
+        
+        {
+            method: 'GET',
+            path:'/customers/{id}/agencies',
+            handler: CustomerController.getCustomerAgency
+        },
+
+        {
+            method: 'GET',
+            path:'/customers/{id}/carers',
+            handler: CustomerController.getCustomerCarers
+        }
+    ])
 
     await server.start();
     console.log('Server running on %s', server.info.uri);
