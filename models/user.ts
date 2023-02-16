@@ -38,11 +38,11 @@ module.exports = (sequelize: any, DataTypes:any ) => {
       // define association here
       User.belongsTo(models.User_Role, {
         as: 'role',
-        foreignKey:'idRole'
+        foreignKey:'idRole',
       })
       User.belongsTo(models.Agency, {
         as: 'agency',
-        foreignKey:'idAgency'
+        foreignKey: 'idAgency'
       })
     }
   }
@@ -60,8 +60,8 @@ module.exports = (sequelize: any, DataTypes:any ) => {
   }, {
     sequelize,
     modelName: 'User',
-    tableName: 'users',
-    timestamps:false
+    timestamps: false
+
   });
   return User;
 };

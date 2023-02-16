@@ -7,10 +7,10 @@ const userModel = db.default.User
 
 
 
-class mainController {
+// class mainController {
 
     
-}
+// }
 
 
-module.exports = mainController
+// module.exports = mainController
