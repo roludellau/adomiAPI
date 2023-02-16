@@ -3,6 +3,7 @@ const Hapi = require('@hapi/hapi')
 import {Request, ResponseToolkit} from '@hapi/hapi'
 import UserController from './controllers/userController'
 import AgencyController from './controllers/agencyController'
+import MissionController from './controllers/missionController'
 import Jwt from '@hapi/jwt';
 import jwtParams from './middlewares/auth'
 import EmployeeController from './controllers/employeeController';
@@ -74,6 +75,13 @@ const init = async () => {
         method:'GET',
         path:'/agencies',
         handler: AgencyController.getAllAgencies
+    })
+
+    //routes pour les missions
+    server.route({
+        method:'GET',
+        path:'/missions',
+        handler: MissionController.getAllMissions
     })
 
 
