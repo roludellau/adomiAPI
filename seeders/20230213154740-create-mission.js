@@ -15,7 +15,7 @@ module.exports = {
         validated: true,
         idClient: 1,
         idEmployee: 2,
-        idCarer: 3 	,
+        idCarer: 3,
         idRecurence: 1
       },
       {
