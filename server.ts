@@ -84,17 +84,17 @@ const init = async () => {
             path:'/customers',
             handler: CustomerController.getAllCustomers
         },
-        
-        {
-            method: 'POST',
-            path: '/customers',
-            handler: CustomerController.createCustomer
-        },
 
         {
             method: 'GET',
             path:'/customers/{id}',
             handler: CustomerController.getOneCustomer
+        },
+        
+        {
+            method: 'POST',
+            path: '/customers',
+            handler: CustomerController.createCustomer
         },
 
         {
@@ -119,7 +119,19 @@ const init = async () => {
             method: 'GET',
             path:'/customers/{id}/carers',
             handler: CustomerController.getCustomerCarers
-        }
+        },
+
+        {
+            method: 'GET',
+            path:'/customers/{id}/appointments',
+            handler: CustomerController.getCustomerAppointments
+        },
+
+        {
+            method: 'GET',
+            path:'/customers/{id}/referents',
+            handler: CustomerController.getCustomerReferent
+        },
     ])
 
     await server.start();

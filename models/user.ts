@@ -44,6 +44,12 @@ module.exports = (sequelize: any, DataTypes:any ) => {
         as: 'agency',
         foreignKey: 'idAgency'
       })
+
+      User.belongsToMany(models.User,{
+        as:'referent',
+        through: 'client_has_referent'
+        
+      })
     }
   }
   User.init({
