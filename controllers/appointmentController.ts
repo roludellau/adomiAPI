@@ -43,9 +43,16 @@ export default class AppointmentController{
         try{
             const appointments = appointmentsModel.findOne({
                 where:{id:id},
-                include:{
-                    association:'mission'
-                }
+                include: [
+                    { 
+                        association: 'mission', 
+                    },
+                    {
+                        association: 'carer',
+                        attributes:['firstName', 'lastName', 'userName', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city']
+                    }
+                
+                ]
             })
             return appointments
         }
