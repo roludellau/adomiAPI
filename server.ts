@@ -201,8 +201,13 @@ const init = async () => {
             handler: MissionController.getOneMission
         },
         {
+            method: 'PATCH',
+            path: '/missions/{id}',
+            handler: MissionController.updateMission
+        },
+        {
             method: 'DELETE',
-            path: '/missions',
+            path: '/missions/{id}',
             handler: MissionController.deleteMission
         }])
 

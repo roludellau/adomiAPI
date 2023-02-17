@@ -21,8 +21,9 @@ module.exports = (sequelize: any, DataTypes: { INTEGER: any; DATE: any; TIME: an
 
     static associate(models: any) {
 
-      Mission.hasOne(models.Recurence, {
-        as: 'recurence'
+      Mission.belongsTo(models.Recurence, {
+        as: 'recurence',
+        foreignKey: 'idRecurence'
       })
 
       Mission.belongsTo(models.User, {
@@ -33,6 +34,10 @@ module.exports = (sequelize: any, DataTypes: { INTEGER: any; DATE: any; TIME: an
       Mission.belongsTo(models.User, {
         as: 'client',
         foreignKey: 'idClient'
+      })
+      Mission.belongsTo(models.User, {
+        as: 'employee',
+        foreignKey: 'idEmployee'
       })
     }
   }

@@ -17,6 +17,7 @@ export default class UserController {
 
         try{
 
+            console.log(request.query)
             const create =  await missionModel.create({
                 startDate: request.query.startDate,
                 startHour: request.query.startHour,
@@ -95,29 +96,17 @@ export default class UserController {
 
     static deleteMission = async (request:Request, h: ResponseToolkit)=>{
 
-        try{
-
-            let mission = await missionModel.findOne(
-                {attributes: [
-                    'startdate','startHour', 'endHour', 'streetName', 'streetNumber', 'postCode','city', 'validated', 'idClient', 'idEmployee'],
-                where:{
-                    id: request.params.id,
-                }, 
-                include: [
-                    {association:
-                    'client', 
-                    attributes: ['street_name', 'street_number', 'post_code','city']}]
-            })
 
             try{
                 
-                await customerModel.destroy({
+                let count = await missionModel.destroy({
                     where:{
-                        id: mission.dataValues.id
+                        id: request.params.id
                     }
                 })
 
-                return "successfully Deleted"
+ 
+                return count
 
             }
             catch(err){
@@ -126,12 +115,47 @@ export default class UserController {
                 throw err
                 
             }
-        }
 
-        catch(err){
-            console.log(err);
+        
+    }
+
+    static updateMission = async(request:Request, h: ResponseToolkit) => {
+        const t = await sequelize.transaction()
+        const id = request.params.id
+        const input = request.query
+        try{
+            const mission = missionModel.findOne({where:{id:id}})
+
+            if(mission){
+                missionModel.update({
+                    startDate: request.query.startDate,
+                    startHour: request.query.startHour,
+                    endHour: request.query.endHour,
+                    streetName: request.query.streetName,
+                    streetNumber: request.query.streetNumber,
+                    postCode: request.query.postCode,
+                    city: request.query.city,
+                    validated: request.query.validated,
+                    idClient: request.query.idClient,
+                    idEmployee: request.query.idEmployee,
+                    idCarer: request.query.idCarer,
+                    idRecurence: request.query.idRecurence
+                },
+                {
+                    where:{
+                        id:id
+                    }
+                })
+                return mission
+            }
+
+            return 0
+        }
+        catch (err){
+            t.rollback()
+            console.log(err)
             throw err
-            
+
         }
         
     }
