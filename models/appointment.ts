@@ -18,8 +18,9 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
     city!:string
     
     static associate(models: any) {
-      Appointment.hasOne(models.User, {
-        as: 'carer'
+      Appointment.belongsTo(models.User, {
+        as: 'carer',
+        foreignKey: 'idCarer'
       })
       Appointment.hasOne(models.Mission, {
         as: 'mission'

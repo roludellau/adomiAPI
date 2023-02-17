@@ -7,6 +7,7 @@ import CustomerController from './controllers/customerController';
 import Jwt from '@hapi/jwt';
 import jwtParams from './middlewares/auth'
 import EmployeeController from './controllers/employeeController';
+import CarerController from './controllers/carerController'
 
 const init = async () => {
 
@@ -19,8 +20,17 @@ const init = async () => {
     server.auth.strategy('jwt_strategy', 'jwt', jwtParams)
     // server.auth.default('jwt_strategy');
 
+    
+    //TEST
+    server.route({
+        method: 'GET',
+        path:'/test',
+        handler: (request: Request, h :ResponseToolkit) => {
+            return 'oui'
+        }
+    })
 
-    //USER
+    //USERS
     server.route([
         {
             method: 'GET',
@@ -36,7 +46,7 @@ const init = async () => {
     ])
 
 
-    //EMPLOYEE
+    //EMPLOYEES
     server.route([
         {
             method:'GET',
@@ -61,23 +71,15 @@ const init = async () => {
     ])
 
 
-
-    server.route({
-        method: 'GET',
-        path:'/test',
-        handler: (request: Request, h :ResponseToolkit) => {
-            return 'oui'
-        }
-    })
-
-    //routes pour les agences
+    //AGENCIES
     server.route({
         method:'GET',
         path:'/agencies',
         handler: AgencyController.getAllAgencies
     })
-
-    //Routes Customers
+    
+    
+    //CUSTOMERS
     server.route([
         {
             method: 'GET',
@@ -122,9 +124,48 @@ const init = async () => {
         }
     ])
 
+    //CARERS
+    server.route([
+        {
+            method: 'POST',
+            path: '/carers',
+            handler: CarerController.createCarer
+        },
+        {
+            method: 'GET',
+            path: '/carers/{id}',
+            handler: CarerController.getCarerById
+        },
+        {
+            method: 'PATCH',
+            path: '/carers/{id}',
+            handler: CarerController.updateCarer
+        },
+        {
+            method: 'DELETE',
+            path: '/carers/{id}', 
+            handler: CarerController.deleteCarer
+        },
+        
+        {
+            method: 'PUT',
+            path: '/carers/{id}/availabilities', 
+            handler: CarerController.addAvailability
+        },
+        {
+            method: 'GET',
+            path: '/carers/{id}/availabilities', 
+            handler: CarerController.getAvailabilities
+        }
+    ])
+
+
+
     await server.start();
     console.log('Server running on %s', server.info.uri);
 }
+
+
 
 process.on('unhandledRejection', (err) => {
     console.log(err)
