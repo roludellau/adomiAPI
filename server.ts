@@ -8,6 +8,8 @@ import Jwt from '@hapi/jwt';
 import jwtParams from './middlewares/auth'
 import EmployeeController from './controllers/employeeController';
 import CarerController from './controllers/carerController'
+import AppointmentController from './controllers/appointmentController';
+import MissionController from './controllers/missionController';
 
 const init = async () => {
 
@@ -96,17 +98,17 @@ const init = async () => {
             path:'/customers',
             handler: CustomerController.getAllCustomers
         },
-        
-        {
-            method: 'POST',
-            path: '/customers',
-            handler: CustomerController.createCustomer
-        },
 
         {
             method: 'GET',
             path:'/customers/{id}',
             handler: CustomerController.getOneCustomer
+        },
+        
+        {
+            method: 'POST',
+            path: '/customers',
+            handler: CustomerController.createCustomer
         },
 
         {
@@ -131,7 +133,19 @@ const init = async () => {
             method: 'GET',
             path:'/customers/{id}/carers',
             handler: CustomerController.getCustomerCarers
-        }
+        },
+
+        {
+            method: 'GET',
+            path:'/customers/{id}/appointments',
+            handler: CustomerController.getCustomerAppointments
+        },
+
+        {
+            method: 'GET',
+            path:'/customers/{id}/referents',
+            handler: CustomerController.getCustomerReferent
+        },
     ])
 
     //CARERS
@@ -168,7 +182,33 @@ const init = async () => {
         }
     ])
 
-
+    //Missions
+    server.route([
+        {
+            method: 'POST',
+            path: '/missions',
+            handler: MissionController.createMission
+        },
+        {
+            method: 'GET',
+            path: '/missions',
+            handler: MissionController.getAllMissions
+        },
+        {
+            method: 'GET',
+            path: '/missions/{id}',
+            handler: MissionController.getOneMission
+        },
+        {
+            method: 'PATCH',
+            path: '/missions/{id}',
+            handler: MissionController.updateMission
+        },
+        {
+            method: 'DELETE',
+            path: '/missions/{id}',
+            handler: MissionController.deleteMission
+        }])
 
     await server.start();
     console.log('Server running on %s', server.info.uri);
