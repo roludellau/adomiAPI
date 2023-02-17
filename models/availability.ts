@@ -1,5 +1,6 @@
 'use strict';
 import {
+  HasMany,
   Model
 } from 'sequelize';
 
@@ -20,9 +21,7 @@ module.exports = (sequelize: any, DataTypes: { NUMBER: any; TIME: any; }) => {
     week_day!: number;
     start_hour!:Date;
     end_hour!:Date;
-    static associate(models: any) {
-      // define association here
-    }
+
   }
   Availability.init({
     week_day: DataTypes.NUMBER,

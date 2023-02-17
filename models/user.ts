@@ -3,7 +3,7 @@ import {
   Model
 } from 'sequelize';
 
-interface UserAttributes{
+export interface UserAttributes{
   firstName:string;
   lastName:string;
   email:string;
@@ -43,6 +43,12 @@ module.exports = (sequelize: any, DataTypes:any ) => {
       User.belongsTo(models.Agency, {
         as: 'agency',
         foreignKey: 'idAgency'
+      })
+
+      User.belongsToMany(models.User,{
+        as:'referent',
+        through: 'client_has_referent'
+        
       })
     }
   }

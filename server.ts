@@ -7,6 +7,8 @@ import CustomerController from './controllers/customerController';
 import Jwt from '@hapi/jwt';
 import jwtParams from './middlewares/auth'
 import EmployeeController from './controllers/employeeController';
+import CarerController from './controllers/carerController'
+import AppointmentController from './controllers/appointmentController';
 import MissionController from './controllers/missionController';
 
 const init = async () => {
@@ -20,8 +22,17 @@ const init = async () => {
     server.auth.strategy('jwt_strategy', 'jwt', jwtParams)
     // server.auth.default('jwt_strategy');
 
+    
+    //TEST
+    server.route({
+        method: 'GET',
+        path:'/test',
+        handler: (request: Request, h :ResponseToolkit) => {
+            return 'oui'
+        }
+    })
 
-    //USER
+    //USERS
     server.route([
         {
             method: 'GET',
@@ -37,7 +48,7 @@ const init = async () => {
     ])
 
 
-    //EMPLOYEE
+    //EMPLOYEES
     server.route([
         {
             method:'GET',
@@ -58,44 +69,46 @@ const init = async () => {
             method:'POST',
             path:'/employees',
             handler: EmployeeController.addEmployee
+        },
+        {
+            method:'DELETE',
+            path:'/employees/{id}',
+            handler:EmployeeController.deleteEmployee
+        },
+        {
+            method:'PATCH',
+            path:'/employees/{id}',
+            handler:EmployeeController.updateEmployee
         }
     ])
 
 
-
-    server.route({
-        method: 'GET',
-        path:'/test',
-        handler: (request: Request, h :ResponseToolkit) => {
-            return 'oui'
-        }
-    })
-
-    //routes pour les agences
+    //AGENCIES
     server.route({
         method:'GET',
         path:'/agencies',
         handler: AgencyController.getAllAgencies
     })
-
-    //Routes Customers
+    
+    
+    //CUSTOMERS
     server.route([
         {
             method: 'GET',
             path:'/customers',
             handler: CustomerController.getAllCustomers
         },
-        
-        {
-            method: 'POST',
-            path: '/customers',
-            handler: CustomerController.createCustomer
-        },
 
         {
             method: 'GET',
             path:'/customers/{id}',
             handler: CustomerController.getOneCustomer
+        },
+        
+        {
+            method: 'POST',
+            path: '/customers',
+            handler: CustomerController.createCustomer
         },
 
         {
@@ -120,35 +133,84 @@ const init = async () => {
             method: 'GET',
             path:'/customers/{id}/carers',
             handler: CustomerController.getCustomerCarers
+        },
+
+        {
+            method: 'GET',
+            path:'/customers/{id}/appointments',
+            handler: CustomerController.getCustomerAppointments
+        },
+
+        {
+            method: 'GET',
+            path:'/customers/{id}/referents',
+            handler: CustomerController.getCustomerReferent
+        },
+    ])
+
+    //CARERS
+    server.route([
+        {
+            method: 'POST',
+            path: '/carers',
+            handler: CarerController.createCarer
+        },
+        {
+            method: 'GET',
+            path: '/carers/{id}',
+            handler: CarerController.getCarerById
+        },
+        {
+            method: 'PATCH',
+            path: '/carers/{id}',
+            handler: CarerController.updateCarer
+        },
+        {
+            method: 'DELETE',
+            path: '/carers/{id}', 
+            handler: CarerController.deleteCarer
+        },
+        
+        {
+            method: 'PUT',
+            path: '/carers/{id}/availabilities', 
+            handler: CarerController.addAvailability
+        },
+        {
+            method: 'GET',
+            path: '/carers/{id}/availabilities', 
+            handler: CarerController.getAvailabilities
         }
     ])
 
+    //Missions
     server.route([
         {
-        method:'GET',
-        path:'/missions',
-        handler: MissionController.getAllMissions
-    },
-    {
-        method:'GET',
-        path:'/missions/{id}',
-        handler: MissionController.getOneMission
-    },
-    {
-        method:'DELETE',
-        path:'/missions/{id}/delete',
-        handler: MissionController.deleteMission
-    },
-    {
-        method:'POST',
-        path:'/missions',
-        handler: MissionController.createMission
-    }
-])
+            method: 'POST',
+            path: '/missions',
+            handler: MissionController.createMission
+        },
+        {
+            method: 'GET',
+            path: '/missions',
+            handler: MissionController.getAllMissions
+        },
+        {
+            method: 'GET',
+            path: '/missions/{id}',
+            handler: MissionController.getOneMission
+        },
+        {
+            method: 'DELETE',
+            path: '/missions',
+            handler: MissionController.deleteMission
+        }])
 
     await server.start();
     console.log('Server running on %s', server.info.uri);
 }
+
+
 
 process.on('unhandledRejection', (err) => {
     console.log(err)
