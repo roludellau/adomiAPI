@@ -170,7 +170,6 @@ const init = async () => {
             path: '/carers/{id}', 
             handler: CarerController.deleteCarer
         },
-        
         {
             method: 'PUT',
             path: '/carers/{id}/availabilities', 
