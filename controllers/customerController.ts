@@ -13,6 +13,8 @@ export default class CustomerController{
 
     static getAllCustomers = async ()=>{
 
+        const t = await sequelize.transaction();
+
         try{
 
           const customers = await customerModel.findAll({attributes: ['firstname'], where:{idRole: 2}})
@@ -22,6 +24,7 @@ export default class CustomerController{
         }
         catch(err){
 
+            t.rollback();
             console.log(err);
             
         }
@@ -30,6 +33,8 @@ export default class CustomerController{
 
 
     static getOneCustomer = async (request: Request, h: ResponseToolkit)=>{
+
+        const t = await sequelize.transaction();
 
         let idKey = request.params.id;
 
@@ -63,6 +68,7 @@ export default class CustomerController{
         }
         catch(err){
 
+            t.rollback();
             console.log(err);
             
         }
@@ -96,6 +102,7 @@ export default class CustomerController{
         }
         catch(err){
 
+            t.rollback();
             console.log(err);
             throw err;
         }
@@ -103,6 +110,8 @@ export default class CustomerController{
     }
 
     static updateCustomer = async (request: Request, h: ResponseToolkit) =>{
+
+        const t = await sequelize.transaction();
 
         try{
             
@@ -133,6 +142,7 @@ export default class CustomerController{
         }
         catch(err){
 
+            t.rollback()
             console.log(err);
             throw err
             
@@ -141,6 +151,8 @@ export default class CustomerController{
     }
 
     static deleteCustomer = async (request:Request, h: ResponseToolkit)=>{
+
+        const t = await sequelize.transaction();
 
         try{
 
@@ -169,6 +181,7 @@ export default class CustomerController{
         }
 
         catch(err){
+            t.rollback();
             console.log(err);
             throw err
             
@@ -177,6 +190,8 @@ export default class CustomerController{
     }
 
     static getCustomerAgency = async (request: Request, h:ResponseToolkit)=>{
+
+        const t = await sequelize.transaction();
 
         try{
             let customer = await customerModel.findOne({attributes:['idAgency'], where:{id: request.params.id}})
@@ -188,6 +203,7 @@ export default class CustomerController{
         }
         catch(err){
 
+            t.rollback()
             console.log(err);
             throw err;
             
@@ -195,6 +211,8 @@ export default class CustomerController{
     }
 
     static getCustomerCarers= async(request: Request, h: ResponseToolkit) =>{
+
+        const t = await sequelize.transaction();
 
         try{
             
@@ -209,6 +227,7 @@ export default class CustomerController{
         }
         catch(err){
 
+            t.rollback();
             console.log(err);
             throw err
             
@@ -216,6 +235,8 @@ export default class CustomerController{
     }
 
     static getCustomerAppointments = async (request: Request, h: ResponseToolkit) =>{
+
+        const t = await sequelize.transaction();
 
         try{
 
@@ -236,6 +257,7 @@ export default class CustomerController{
         }
         catch(err){
 
+            t.rollback();
             console.log(err);
             throw err
             
@@ -243,8 +265,11 @@ export default class CustomerController{
     }
 
     static getCustomerReferent = async(request: Request, h: ResponseToolkit)=>{
+
+        const t = await sequelize.transaction();
+
         try{
-            let customer =  await sequelize.query(" SELECT DISTINCT `User`.`id` AS `client id`, `User`.`firstname` AS `client name`, `referent`.`id` AS `referent id`, `referent`.`firstname` AS `referent name` FROM `Users` AS `User` LEFT OUTER JOIN ( `client_has_referent` AS `referent->client_has_referent` INNER JOIN `Users` AS `referent` ON `referent`.`id` = `referent->client_has_referent`.`idEmployee`) ON `User`.`id` = `referent->client_has_referent`.`idClient` WHERE `User`.`id` = '1' ", { type: sequelize.QueryTypes.SELECT} )
+            let customer =  await sequelize.query("SELECT `User`.`id` AS `client id`, `User`.`firstname` AS `client name`, `referent`.`id` AS `referent id`, `referent`.`firstname` AS `referent name` FROM `Users` AS `User` LEFT OUTER JOIN ( `client_has_referent` INNER JOIN `Users` AS `referent` ON `referent`.`id` = `client_has_referent`.`idEmployee`) ON `User`.`id` = `client_has_referent`.`idClient` WHERE `User`.`id` = '"+ request.params.id +"'", { type: sequelize.QueryTypes.SELECT} )
 
             // console.log(customer)
             
@@ -253,6 +278,7 @@ export default class CustomerController{
         catch(err){
 
             console.log(err);
+            t.rollback();
             throw err;
             
         }
