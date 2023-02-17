@@ -67,6 +67,16 @@ const init = async () => {
             method:'POST',
             path:'/employees',
             handler: EmployeeController.addEmployee
+        },
+        {
+            method:'DELETE',
+            path:'/employees/{id}',
+            handler:EmployeeController.deleteEmployee
+        },
+        {
+            method:'PATCH',
+            path:'/employees/{id}',
+            handler:EmployeeController.updateEmployee
         }
     ])
 

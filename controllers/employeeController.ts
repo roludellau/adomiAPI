@@ -89,7 +89,6 @@ export default class EmployeeController {
         const input = request.query
         console.log(input);
         
-
         try {
             const employee = await userModel.create({
                 firstName: input.firstname,
@@ -106,7 +105,6 @@ export default class EmployeeController {
                 idAgency: input.idagency,
             })
             console.log(employee);
-            
             return employee
         }
         catch (err) {
@@ -115,6 +113,62 @@ export default class EmployeeController {
             
             throw err
         }
+    }
+
+    static deleteEmployee = async(request: Request, h:ResponseToolkit) => {
+        const t = await sequelize.transaction()
+        const id = request.params.id
+        try{
+            const count = await userModel.destroy({where: {id: id}})
+            return count
+        }
+        catch (err){
+            t.rollback()
+            console.log(err);
+            throw err
+            
+        }
+    }
+
+    static updateEmployee = async(request:Request, h: ResponseToolkit) => {
+        const t = await sequelize.transaction()
+        const id = request.params.id
+        const input = request.query
+        try{
+            const user = userModel.findOne({where:{id:id}})
+
+            if(user){
+                userModel.update({
+                    firstName: input.firstname,
+                    lastName: input.lastname,
+                    email: input.email,
+                    password: input.password,
+                    userName: input.username,
+                    phone: input.phone,
+                    street_name: input.streetname,
+                    street_number: input.streetnumber,
+                    post_code: input.postcode,
+                    city: input.city,
+                    idRole: input.idrole,
+                    idAgency: input.idagency,
+                },
+                {
+                    where:{
+                        id:id
+                    }
+                })
+                return user
+            }
+
+            return 0
+        }
+        catch (err){
+            t.rollback()
+            console.log(err)
+            throw err
+
+        }
+        
     }
 
 
