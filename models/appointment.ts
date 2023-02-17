@@ -18,13 +18,13 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
     city!:string
     
     static associate(models: any) {
-      Appointment.hasOne(models.User, {
+      Appointment.belongsTo(models.User, {
         as: 'carer',
         foreignKey: 'idCarer'
       })
-      Appointment.hasOne(models.Mission, {
+      Appointment.belongsTo(models.Mission, {
         as: 'mission',
-        foreignKey: 'id' //bizarrement dans ce type de relation, ça ne fonctionne pas si on entre ici le nom de champ de la clé étrangère (ex: idMission). Il faut mettre le nom de champ de la table à laquelle on se réfère.
+        foreignKey: 'idMission'
       })
     }
   }
@@ -39,7 +39,8 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
   }, {
     sequelize,
     modelName: 'Appointment',
-    tableName: 'appointments'
+    tableName: 'appointments',
+    timestamps: false
   });
   return Appointment;
 };

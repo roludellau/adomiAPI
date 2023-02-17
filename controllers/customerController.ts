@@ -15,7 +15,7 @@ export default class CustomerController{
 
         try{
 
-          const customers = await customerModel.findAll({attributes: ['firstname'], where:{idRole: 1}})
+          const customers = await customerModel.findAll({attributes: ['firstname'], where:{idRole: 2}})
         
             return customers;
 
