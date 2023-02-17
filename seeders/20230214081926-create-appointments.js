@@ -5,7 +5,7 @@ module.exports = {
   async up (queryInterface, Sequelize) {
       return queryInterface.bulkInsert('appointments', [
       {
-        date: '2023-02-14 11:00:00',
+        date: '2023-02-14',
         startHour: '14:00:00',
         endHour: '15:00:00' ,
         streetName: 'Rue Jean Jaures',
@@ -16,7 +16,7 @@ module.exports = {
         idMission: 1
       },
       {
-        date: '2023-02-21 11:00:00',
+        date: '2023-02-21',
         startHour: '16:00:00',
         endHour: '17:00:00' ,
         streetName: 'rue Albert Camus',

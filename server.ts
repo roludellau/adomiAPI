@@ -8,6 +8,7 @@ import Jwt from '@hapi/jwt';
 import jwtParams from './middlewares/auth'
 import EmployeeController from './controllers/employeeController';
 import CarerController from './controllers/carerController'
+import AppointmentController from './controllers/appointmentController';
 
 const init = async () => {
 
@@ -167,6 +168,36 @@ const init = async () => {
             path: '/carers/{id}/availabilities', 
             handler: CarerController.getAvailabilities
         }
+    ])
+
+
+    // APPOINTMENTS
+    server.route([
+        {
+            method:'GET',
+            path:'/appointments',
+            handler:AppointmentController.getAppointments
+        },
+        {
+            method:'GET',
+            path:'/appointments/{id}',
+            handler:AppointmentController.getAppointment
+        },
+        {
+            method:'POST',
+            path:'/appointments',
+            handler:AppointmentController.addAppointment
+        },
+        {
+            method:'PATCH',
+            path:'/appointments/{id}',
+            handler:AppointmentController.updateAppointment
+        },
+        {
+            method:'DELETE',
+            path:'/appointments/{id}',
+            handler:AppointmentController.deleteAppointment
+        },
     ])
 
 

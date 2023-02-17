@@ -22,8 +22,9 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
         as: 'carer',
         foreignKey: 'idCarer'
       })
-      Appointment.hasOne(models.Mission, {
-        as: 'mission'
+      Appointment.belongsTo(models.Mission, {
+        as: 'mission',
+        foreignKey: 'idMission'
       })
     }
   }
@@ -38,7 +39,8 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
   }, {
     sequelize,
     modelName: 'Appointment',
-    tableName: 'appointments'
+    tableName: 'appointments',
+    timestamps: false
   });
   return Appointment;
 };

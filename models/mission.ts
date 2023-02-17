@@ -45,7 +45,8 @@ module.exports = (sequelize: any, DataTypes: { INTEGER: any; DATE: any; TIME: an
   }, {
     sequelize,
     modelName: 'Mission',
-    tableName: 'missions'
+    tableName: 'missions',
+    timestamps:false
   });
   return Mission;
 };
