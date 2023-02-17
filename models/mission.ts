@@ -29,6 +29,11 @@ module.exports = (sequelize: any, DataTypes: { INTEGER: any; DATE: any; TIME: an
         as: 'carer',
         foreignKey: 'idCarer'
       })
+
+      Mission.belongsTo(models.User, {
+        as: 'client',
+        foreignKey: 'idClient'
+      })
     }
   }
 
@@ -45,7 +50,8 @@ module.exports = (sequelize: any, DataTypes: { INTEGER: any; DATE: any; TIME: an
   }, {
     sequelize,
     modelName: 'Mission',
-    tableName: 'missions'
+    tableName: 'missions',
+    timestamps: false,
   });
   return Mission;
 };

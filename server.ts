@@ -7,6 +7,7 @@ import CustomerController from './controllers/customerController';
 import Jwt from '@hapi/jwt';
 import jwtParams from './middlewares/auth'
 import EmployeeController from './controllers/employeeController';
+import MissionController from './controllers/missionController';
 
 const init = async () => {
 
@@ -121,12 +122,29 @@ const init = async () => {
             handler: CustomerController.getCustomerCarers
         }
     ])
-    
-    server.route({
+
+    server.route([
+        {
         method:'GET',
         path:'/missions',
         handler: MissionController.getAllMissions
-    })
+    },
+    {
+        method:'GET',
+        path:'/missions/{id}',
+        handler: MissionController.getOneMission
+    },
+    {
+        method:'DELETE',
+        path:'/missions/{id}/delete',
+        handler: MissionController.deleteMission
+    },
+    {
+        method:'POST',
+        path:'/missions',
+        handler: MissionController.createMission
+    }
+])
 
     await server.start();
     console.log('Server running on %s', server.info.uri);
