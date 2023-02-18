@@ -2,7 +2,7 @@ import { Request, ResponseToolkit } from "hapi";
 import argon2 from 'argon2';
 import boom from '@hapi/boom'
 import { UserAttributes } from '../models/user'
-import { Error } from "sequelize";
+import Sequelize, { Error } from "sequelize";
 const db = require('../models/index')
 const sequelize = db.default.sequelize
 const User = db.default.User
