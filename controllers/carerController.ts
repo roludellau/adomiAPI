@@ -8,6 +8,8 @@ const db = require('../models/index')
 const sequelize = db.default.sequelize
 const User = db.default.User
 const Availability = db.default.Availability
+const Mission = db.default.Mission
+const Appointment = db.default.Appointment
 
 export default class CarerController {
 
@@ -97,7 +99,7 @@ export default class CarerController {
                 }
             ).then((result:any[]) => result[0]).catch((err: Error) => console.log(err))
             
-        //S'il est lié à cette dispo
+        //Si l'auxiliaire est lié à cette dispo
             if (isLinked){
                 console.log(isLinked)
                 return boom.conflict('L\'auxiliaire a déjà ce créneau associé à son compte')
@@ -108,15 +110,16 @@ export default class CarerController {
                 "INSERT INTO `carer_has_availabilities` (idCarer, idAvailability)"
                 + " VALUES (:idCarer, :idAvailability)",
                 {
-                    type: Sequelize.QueryTypes.SELECT ,
                     replacements: {
                         idCarer : req.params.id,
                         idAvailability : existing.id
                     }
                 }
-            ).then(() => existing /*Retourne la dispo existante*/).catch((err: Error) => console.log(err))
+            ).then(() => existing /*Retourne la dispo existante*/)
+             .catch((err: Error) => { console.log(err); return boom.boomify })
             return addLink
         }
+
 
     //Crée la dispo et lie le carer
         const t = await sequelize.transaction()
@@ -126,7 +129,6 @@ export default class CarerController {
                 "INSERT INTO `carer_has_availabilities` (idCarer, idAvailability)"
                 + " VALUES (:idCarer, :idAvailability)",
                 {
-                    
                     replacements: {
                         idCarer : req.params.id,
                         idAvailability : newAvailability.id
@@ -138,14 +140,14 @@ export default class CarerController {
         catch (err){
             console.log(err)
             t.rollback()
-            return boom.badData('jsp')
+            return boom.badData('Les données fournies sont probablement mal formatées.')
         }
    }
 
 
    static getAvailabilities = async (req: Request, h: ResponseToolkit) => {
         const result = await sequelize.query(
-            "SELECT `availabilities`.`week_day`, `availabilities`.`start_hour`, `availabilities`.`end_hour`"
+            "SELECT `availabilities`.`week_day`, `availabilities`.`start_hour`, `availabilities`.`end_hour`, `availabilities`.`id`"
             + " FROM `users`"
             + " JOIN `carer_has_availabilities` ON `users`.`id` = `carer_has_availabilities`.`idCarer`"
             + " JOIN `availabilities` ON `carer_has_availabilities`.`idAvailability` = `availabilities`.`id`"
@@ -160,6 +162,108 @@ export default class CarerController {
         return result
     }
    
+
+    static deleteAvailability = async (req: Request, h: ResponseToolkit) => {
+        const t = await sequelize.transaction().then((t:any) => t).catch((err: Error) => boom.serverUnavailable('Allume ton WAMP, banane.'))
+        return await Availability.destroy({
+            where: {id: req.params.id}
+        })
+        .then((res: any) => { return {rowsAffected: res} })
+        .catch((err: Error) => {
+            console.log(err);
+            t.rollback()
+            return boom.internal('Désolé, veuillez réessayer plus tard.')
+        })
+    }
+
+
+    static getCarerCustomers = async (req: Request, h: ResponseToolkit) => {
+        
+        return await Mission.findAll({attributes:['idClient'], 
+            where:{idCarer: req.params.id},
+            include:{
+                association: 'client',
+                attributes:['firstname', 'lastname', 'phone'],
+            }
+        })
+        .then((customers:PromiseFulfilledResult<any>) => customers)
+        .catch((err:Error) => {
+            console.log(err)
+            return boom.serverUnavailable()
+        })
+        //Finir: éviter de récupérer plusieurs fois le même client
+    }
+
+
+
+
+    static getAppointments = async (req: Request, h: ResponseToolkit) => {
+        const appointments:any[] = await Appointment.findAll(
+            {
+                attributes: ['id', 'idMission', 'date', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode', 'city'],
+                where: {idCarer: req.params.id},
+                include: {
+                    association: 'mission',
+                    attributes: ['idClient', 'idRecurence']
+                }
+            }
+        ).then((res: typeof Appointment[]) => res)
+         .catch((err: Error) => { console.log(err); return err })
+
+        //appt : appointment
+        //Pour chaque rdv: retire les champs nulls, les note, va les chercher dans la table d'après 
+        const completeInfo = await Promise.all(
+            appointments.map(async (appt) => {
+                //Verif des champs d'appointments
+                let nullInfo = []
+                let info = appt.dataValues
+                for (const prop in info){
+                    if (info[prop] == null){
+                        nullInfo.push(prop)
+                        delete info[prop]
+                    }
+                }
+                if (nullInfo.length == 0){
+                    return new Promise((resolveFunc) => {
+                        resolveFunc(appt)
+                    })
+                }
+
+                //Fetch mission
+                const infoFromMission = await Mission.findByPk(info.idMission, { attributes: nullInfo })
+                    .then((info: typeof Mission) => info)
+                    .catch((err:Error) => console.log(err))
+                //Verif des champs de missions
+                info = {... info, ... infoFromMission.dataValues}
+                nullInfo = []
+                for (const prop in info){
+                    if (info[prop] == null){
+                        nullInfo.push(prop)
+                        delete info[prop]
+                    }
+                }
+                if (nullInfo.length == 0){
+                    appt.dataValues = {... appt.dataValues, ... info}
+                    return new Promise((resolveFunc) => {
+                        resolveFunc(appt)
+                    })
+                }
+
+                //Fetch customer
+                const infoFromCustomer = await User.findByPk(info.idClient, { attributes: nullInfo })
+                .then((info: typeof User) => info)
+                .catch((err:Error) => console.log(err))
+                appt.dataValues = {... appt.dataValues, ... info, ... infoFromCustomer.dataValues}
+
+                return new Promise((resolveFunc) => {
+                    resolveFunc(appt)
+                })
+            })
+        )
+        
+        
+       return completeInfo
+    }
 }
 
 

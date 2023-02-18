@@ -23,10 +23,7 @@ module.exports = (sequelize: any, DataTypes: { NUMBER: any; TIME: any; }) => {
     end_hour!:Date;
 
     static associate(models: any) {
-      Availability.belongsToMany(models.User, { 
-        through: 'carer_has_availabilities',
-        foreignKey: 'idCarer'
-      })
+
     }
 
   }
