@@ -172,6 +172,19 @@ const init = async () => {
         },
         
         {
+            method: 'GET',
+            path: '/carers/{id}/customers', 
+            handler: CarerController.getCarerCustomers 
+        },
+        {
+            method: 'GET',
+            path: '/carers/{id}/appointments', 
+            handler: CarerController.getAppointments
+        }
+    ])
+        //AVAILABILITIES
+        server.route([
+        {
             method: 'PUT',
             path: '/carers/{id}/availabilities', 
             handler: CarerController.addAvailability
@@ -180,8 +193,14 @@ const init = async () => {
             method: 'GET',
             path: '/carers/{id}/availabilities', 
             handler: CarerController.getAvailabilities
+        },
+        {
+            method: 'DELETE',
+            path: '/availabilities/{id}', 
+            handler: CarerController.deleteAvailability
         }
     ])
+    
 
     //Missions
     server.route([

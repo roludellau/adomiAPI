@@ -22,6 +22,10 @@ module.exports = (sequelize: any, DataTypes: { NUMBER: any; TIME: any; }) => {
     start_hour!:Date;
     end_hour!:Date;
 
+    static associate(models: any) {
+
+    }
+
   }
   Availability.init({
     week_day: DataTypes.NUMBER,
