@@ -22,13 +22,6 @@ module.exports = (sequelize: any, DataTypes: { NUMBER: any; TIME: any; }) => {
     start_hour!:Date;
     end_hour!:Date;
 
-    static associate(models: any) {
-      Availability.belongsToMany(models.User, { 
-        through: 'carer_has_availabilities',
-        foreignKey: 'idCarer'
-      })
-    }
-
   }
   Availability.init({
     week_day: DataTypes.NUMBER,
