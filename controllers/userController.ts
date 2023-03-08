@@ -65,15 +65,18 @@ export default class UserController {
                 attributes: ['id', 'firstName', 'lastname', 'email', 'password'],
                 where: { userName: username }
             })
-            if (user && await argon2.verify(user.password, password).then((res)=>res).catch((err)=>console.log(err))){
-                return {id: user.id, token: this.generateToken(username as string, user.role)}
+            if (user && await argon2.verify(user.password, password)){
+                return {
+                    id: user.id, 
+                    token: this.generateToken(username as string, user.role)
+                }
             } else {
                 return boom.badData('Le nom d\'utilisateur ou le mot de passe est incorrect')
             }
         }
         catch (err) {
             await t.rollback()
-            //console.log(err)
+            console.log(err)
             throw err
         }
     }

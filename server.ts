@@ -35,7 +35,7 @@ const init = async () => {
         path:'/test',
         options: {auth: false},
         handler: (request: Request, h :ResponseToolkit) => {
-            return h.response('oui').header('Access-Control-Allow-Origin', 'https://localhost:3001')
+            return h.response('oui')
         }
     })
 
