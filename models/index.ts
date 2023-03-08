@@ -16,6 +16,7 @@ try {
     sequelize = new Sequelize(config.database, config.username, config.password, config);
   }
 } catch (err){
+    console.log(err)
     throw err
 }
 
@@ -41,7 +42,9 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
-db.sequelize = sequelize;
+// Check la connexion à la bdd
+
+db.sequelize = sequelize
 db.Sequelize = Sequelize;
 
 export default db;

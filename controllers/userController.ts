@@ -45,9 +45,13 @@ export default class UserController {
         return token
     }
 
-    
+
 
     static signIn = async (request: Request, h: ResponseToolkit) => {
+
+        try {await sequelize.authenticate()}
+        catch {return boom.serverUnavailable('Le serveur de bdd ne répond pas')}
+
         type Payload = {
             username: string
             password: string
@@ -58,26 +62,22 @@ export default class UserController {
         if (!username || !password){
             return boom.badData('Les éléments fournis sont mal formatés')
         }
-        const t = await sequelize.transaction()
-        
-        try {
-            const user = await userModel.findOne({
-                attributes: ['id', 'firstName', 'lastname', 'email', 'password'],
-                where: { userName: username }
-            })
-            if (user && await argon2.verify(user.password, password)){
-                return {
-                    id: user.id, 
-                    token: this.generateToken(username as string, user.role)
-                }
-            } else {
-                return boom.badData('Le nom d\'utilisateur ou le mot de passe est incorrect')
+
+        const user = await userModel.findOne({
+            attributes: ['id', 'firstName', 'lastname', 'email', 'password'],
+            where: { userName: username },
+            include:{
+                association: 'role',
+                attributes:['label'],
             }
+        })
+        if (!user || !await argon2.verify(user.password, password)){
+            return boom.unauthorized('Le nom d\'utilisateur ou le mot de passe est incorrect')
         }
-        catch (err) {
-            await t.rollback()
-            console.log(err)
-            throw err
+
+        return {
+            id: user.id, 
+            token: this.generateToken(username as string, user.role.label)
         }
     }
 

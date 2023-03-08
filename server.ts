@@ -20,7 +20,7 @@ const init = async () => {
             cors: {
                 origin: ['http://localhost:3000'],
                 headers: ['Accept', 'Authorization', 'Content-Type', 'If-None-Match'], //default
-            }
+            },
         }
     })
 
