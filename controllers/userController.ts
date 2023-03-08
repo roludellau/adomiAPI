@@ -1,6 +1,7 @@
 import { Request, ResponseToolkit } from "hapi";
 import Jwt from '@hapi/jwt';
 import argon2 from 'argon2';
+import boom from '@hapi/boom'
 import * as fs from 'fs/promises';
 const db = require('../models/index')
 const sequelize = db.default.sequelize
@@ -24,13 +25,14 @@ export default class UserController {
         }
     }
     
-    static generateToken(username:string){
+    static generateToken(username:string, role:string){
         //const key = async () => fs.readFile('../key/key.txt')
         const token = Jwt.token.generate(
             {
                 aud: 'api.adomi.fr',
                 iss: 'api.adomi.fr',
                 user: username,
+                userRole: role
             },
             {
                 key: 'IceTea',
@@ -46,8 +48,16 @@ export default class UserController {
     
 
     static signIn = async (request: Request, h: ResponseToolkit) => {
-        let username = request.query.username
-        let password = request.query.password
+        type Payload = {
+            username: string
+            password: string
+        }
+        let payload = request.payload as Payload
+        let [username, password] = [payload.username, payload.password]
+
+        if (!username || !password){
+            return boom.badData('Les éléments fournis sont mal formatés')
+        }
         const t = await sequelize.transaction()
         
         try {
@@ -55,8 +65,13 @@ export default class UserController {
                 attributes: ['id', 'firstName', 'lastname', 'email', 'password'],
                 where: { userName: username }
             })
-            if (await argon2.verify(user.password, password as string)){
-                return {id: user.id, token: this.generateToken(username as string)}
+            if (user && await argon2.verify(user.password, password)){
+                return {
+                    id: user.id, 
+                    token: this.generateToken(username as string, user.role)
+                }
+            } else {
+                return boom.badData('Le nom d\'utilisateur ou le mot de passe est incorrect')
             }
         }
         catch (err) {
