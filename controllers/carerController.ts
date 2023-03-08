@@ -27,12 +27,12 @@ export default class CarerController {
         payload.idRole = '3' //toujours
 
         let newCarer = await User.create(payload)
-            .then((res: UserAttributes) => res)
+            .then((res: UserAttributes) => { return { ...res, password: '' } }) //pourpakivoi
             .catch((err:Error) => {
                 t.rollback()
                 return boom.badData('Les données fournies sont probablement mal formatées.')
             })
-        newCarer.password = '' //pourpakivoi
+        
         return newCarer
    }
 
@@ -83,6 +83,9 @@ export default class CarerController {
    static addAvailability = async (req: Request, h: ResponseToolkit) => {
         let payload = req.query
         let existing = await Availability.findOne({where:payload})
+                                .then((res: typeof Availability) => res)
+                                .catch((err:Error) => boom.boomify(err))
+
 
     //Si la dispo existe
         if (existing){
@@ -90,11 +93,15 @@ export default class CarerController {
                 "SELECT `idCarer`"
                 + " FROM `carer_has_availabilities`"
                 + " WHERE (idAvailability = :idExisting) AND (idCarer = :idCarer)",
-                { 
+                {
                     type: Sequelize.QueryTypes.SELECT,
-                    replacements: { idExisting : existing.id, idCarer: req.params.id},
+                    replacements: { 
+                        idExisting : existing.id, 
+                        idCarer: req.params.id
+                    },
                 }
-            ).then((result:any[]) => result[0]).catch((err: Error) => console.log(err))
+            ).then((result:any[]) => result[0])
+             .catch(() => boom.serverUnavailable('Erreur à isLinked'))
             
         //Si l'auxiliaire est lié à cette dispo
             if (isLinked){
@@ -112,8 +119,8 @@ export default class CarerController {
                         idAvailability : existing.id
                     }
                 }
-            ).then(() => existing /*Retourne la dispo existante*/)
-             .catch((err: Error) => { console.log(err); return boom.boomify })
+            ).then(() => existing) //Retourne la dispo nouvellement liée
+             .catch(() => boom.serverUnavailable('Erreur à addLink') )
             return addLink
         }
 

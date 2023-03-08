@@ -14,28 +14,35 @@ import MissionController from './controllers/missionController';
 const init = async () => {
 
     const server = Hapi.server({
-        port: 3000,
-        host: 'localhost'
+        port: 8000,
+        host: 'localhost',
+        routes: {
+            cors: {
+                origin: ['http://localhost:3000'],
+                headers: ['Accept', 'Authorization', 'Content-Type', 'If-None-Match'], //default
+            }
+        }
     })
 
     await server.register(Jwt);
     server.auth.strategy('jwt_strategy', 'jwt', jwtParams)
-    // server.auth.default('jwt_strategy');
+    server.auth.default('jwt_strategy');
 
     
     //TEST
     server.route({
         method: 'GET',
         path:'/test',
+        options: {auth: false},
         handler: (request: Request, h :ResponseToolkit) => {
-            return 'oui'
+            return h.response('oui').header('Access-Control-Allow-Origin', 'https://localhost:3001')
         }
     })
 
     //USERS
     server.route([
         {
-            method: 'GET',
+            method: 'POST',
             path: '/sign-in',
             options: {auth: false},
             handler: UserController.signIn
