@@ -28,7 +28,7 @@ const init = async () => {
     server.auth.strategy('jwt_strategy', 'jwt', jwtParams)
     server.auth.default('jwt_strategy'); //marre de cette oppression
 
-    
+
     //TEST
     server.route({
         method: 'GET',
