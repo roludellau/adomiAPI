@@ -4,6 +4,7 @@ import argon2 from 'argon2';
 import boom from '@hapi/boom'
 import * as fs from 'fs/promises';
 const db = require('../models/index')
+import {Error} from "sequelize";
 const sequelize = db.default.sequelize
 const userModel = db.default.User
 
@@ -71,6 +72,8 @@ export default class UserController {
                 attributes:['label'],
             }
         })
+        .catch((err: Error)=> console.log(err))
+
         if (!user || !await argon2.verify(user.password, password)){
             return boom.unauthorized('Le nom d\'utilisateur ou le mot de passe est incorrect')
         }
