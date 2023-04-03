@@ -88,13 +88,15 @@ export default class EmployeeController {
         const t = await sequelize.transaction()
         const input = request.query
         console.log(input);
+
+        const userpassword = await argon2.hash(request.query.password as string);
         
         try {
             const employee = await userModel.create({
                 firstName: input.firstname,
                 lastName: input.lastname,
                 email: input.email,
-                password: input.password,
+                password: userpassword,
                 userName: input.username,
                 phone: input.phone,
                 street_name: input.streetname,

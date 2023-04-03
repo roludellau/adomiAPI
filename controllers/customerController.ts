@@ -79,7 +79,7 @@ export default class CustomerController{
         const t = await sequelize.transaction();
 
         try{
-            const userpassword = await argon2.hash(request.query.password[0]);
+            const userpassword = await argon2.hash(request.query.password as string);
 
             const test =  await userModel.create({
                 firstName: request.query.firstName,

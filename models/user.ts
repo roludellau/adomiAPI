@@ -151,20 +151,25 @@ module.exports = (sequelize: any, DataTypes:any ) => {
           msg:"Veuillez entrer un numéro à 10 chiffres"
         },
 
-        //test custom validation
-        validPhone(value: any){
+        is:{
+          args: [/^0[0-9].*$/],
+          msg: "Le numéro de téléphone doit commencer par 0"
+        },
 
-          let regExp = /^0[0-9].*$/
 
-          if(!regExp.test(value)){
+        // validPhone(value: any){
 
-            let msg = "Veuillez entrer un numéro de téléphone valide"
+        //   let regExp = /^0[0-9].*$/
 
-            return msg
+        //   if(!regExp.test(value)){
 
-          }
+        //     throw new Error("Le numéro de téléphone doit commencer par 0");
 
-        }
+        //     // return msg
+
+        //   }
+
+        // }
         
       }
     },
@@ -189,7 +194,8 @@ module.exports = (sequelize: any, DataTypes:any ) => {
   }, {
     sequelize,
     modelName: 'User',
-    timestamps: false
+    timestamps: false,
+    tableName: 'users'
 
   });
   return User;
