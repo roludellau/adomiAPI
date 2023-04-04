@@ -18,7 +18,7 @@ const init = async () => {
         host: 'localhost',
         routes: {
             cors: {
-                origin: ['http://localhost:3000'],
+                origin: ['*'],
                 headers: ['Accept', 'Authorization', 'Content-Type', 'If-None-Match'], //default
             },
         }
@@ -26,7 +26,7 @@ const init = async () => {
 
     await server.register(Jwt);
     server.auth.strategy('jwt_strategy', 'jwt', jwtParams)
-    server.auth.default('jwt_strategy'); //marre de cette oppression
+    //server.auth.default('jwt_strategy'); //marre de cette oppression
 
 
     //TEST

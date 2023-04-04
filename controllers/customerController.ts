@@ -2,6 +2,7 @@ import { Request, ResponseToolkit } from "hapi";
 
 const db = require('../models/index')
 import argon2 from 'argon2';
+import boom from '@hapi/boom'
 const sequelize = db.default.sequelize
 const userModel = db.default.User
 const agencyModel = db.default.Agency
@@ -11,22 +12,14 @@ const appointmentModel = db.default.Appointment
 
 export default class CustomerController{
 
-    static getAllCustomers = async ()=>{
-
-        const t = await sequelize.transaction();
+    static getAllCustomers = async () => {
 
         try{
-
           const customers = await customerModel.findAll({attributes: ['firstname'], where:{idRole: 2}})
-        
             return customers;
-
         }
         catch(err){
-
-            t.rollback();
             console.log(err);
-            
         }
         
     }
@@ -34,11 +27,7 @@ export default class CustomerController{
 
     static getOneCustomer = async (request: Request, h: ResponseToolkit)=>{
 
-        const t = await sequelize.transaction();
-
         let idKey = request.params.id;
-
-        try{
 
             const customer = await customerModel.findOne({
                 attributes: [
@@ -51,9 +40,9 @@ export default class CustomerController{
                     'city'], 
                 where:{
                     id: idKey
-                },  
+                },
                 include: [
-                    { 
+                    {
                         association: 'role', 
                         attributes: ['label']
                     },
@@ -62,23 +51,19 @@ export default class CustomerController{
                         attributes: ['name', 'adress']
                     }
                 
-                ]});
+                ]})
+                .catch(async (err: Error) => {
+                    console.log(err)
+                    boom.serverUnavailable('Erreur inconnue')
+                })
 
             return customer;
-        }
-        catch(err){
-
-            t.rollback();
-            console.log(err);
-            
-        }
     }
+
 
     static createCustomer = async (request: Request, h: ResponseToolkit)=>{
 
-        const t = await sequelize.transaction();
-
-        try{
+        try {
             const userpassword = await argon2.hash(request.query.password as string);
 
             const test =  await userModel.create({
@@ -94,31 +79,22 @@ export default class CustomerController{
                 city: request.query.city,
                 idRole: request.query.idRole,
                 idAgency: request.query.idAgency
-    
             });
 
             return test
-
         }
         catch(err){
-
-            t.rollback();
             console.log(err);
-            throw err;
+            boom.serverUnavailable('Erreur inconnue')
         }
         
     }
 
     static updateCustomer = async (request: Request, h: ResponseToolkit) =>{
 
-        const t = await sequelize.transaction();
-
-        try{
-            
+        try {
             let customer = await customerModel.findOne({attributes:['id','firstName', 'lastname', 'email', 'userName', 'phone', 'street_name', 'street_number', 'post_code', 'city', 'idAgency'], where:{id: request.params.id}});
-            
             if(customer){
-
                 const updatedCustomer = await customer.update({
                     firstName: request.query.firstName,
                     lastName: request.query.lastName,
@@ -131,30 +107,17 @@ export default class CustomerController{
                     city: request.query.city,
                     idAgency: request.query.idAgency
                 })
-    
-                console.log(updatedCustomer);
-    
+
                 return updatedCustomer
-                // return customer
-
-            }        
-
+            }
         }
         catch(err){
-
-            t.rollback()
             console.log(err);
-            throw err
-            
+            boom.serverUnavailable('Erreur inconnue')
         }
-
     }
 
     static deleteCustomer = async (request:Request, h: ResponseToolkit)=>{
-
-        const t = await sequelize.transaction();
-
-        try{
 
             let customer = await customerModel.findOne({
                 attributes:['id'], 
@@ -162,60 +125,39 @@ export default class CustomerController{
                     id: request.params.id
                 }
             })
+            .catch((err:Error) => {
+                console.log(err)
+                boom.serverUnavailable('Erreur inconnue')
+            })
 
-            try{
-                
-                await customerModel.destroy({
-                    where:{id: customer.dataValues.id}
-                })
-
-                return "customer supprimé"
-
+            if (!customer){
+                return boom.notFound('L\'utilisateur n\'a pas été trouvé')
             }
-            catch(err){
 
-                console.log(err);
-                throw err
-                
-            }
-        }
+            await customerModel.destroy({
+                where:{id: customer.dataValues.id}
+            })
 
-        catch(err){
-            t.rollback();
-            console.log(err);
-            throw err
-            
-        }
+            return "customer supprimé"
         
     }
 
     static getCustomerAgency = async (request: Request, h:ResponseToolkit)=>{
 
-        const t = await sequelize.transaction();
-
         try{
             let customer = await customerModel.findOne({attributes:['idAgency'], where:{id: request.params.id}})
-
             let agency = await agencyModel.findOne({attributes:['name', 'adress'], where:{id: customer.dataValues.idAgency}})
-
             return agency
-    
         }
         catch(err){
-
-            t.rollback()
             console.log(err);
             throw err;
-            
         }
     }
 
-    static getCustomerCarers= async(request: Request, h: ResponseToolkit) =>{
-
-        const t = await sequelize.transaction();
+    static getCustomerCarers= async(request: Request, h: ResponseToolkit) => {
 
         try{
-            
             let carer = await missionModel.findAll({attributes:['idCarer'], 
                 where:{idClient: request.params.id},
                 include:{
@@ -226,19 +168,15 @@ export default class CustomerController{
             return carer
         }
         catch(err){
-
-            t.rollback();
             console.log(err);
             throw err
-            
         }
+
     }
 
     static getCustomerAppointments = async (request: Request, h: ResponseToolkit) =>{
 
-        const t = await sequelize.transaction();
-
-        try{
+        try {
 
             let appointments = await appointmentModel.findAll({
                 attributes:['date', 'startHour', 'endHour'],
@@ -249,38 +187,31 @@ export default class CustomerController{
                         where:{idClient : request.params.id}
                     }
                 ]
-
-            }) 
+            })
 
             return appointments
 
         }
         catch(err){
-
-            t.rollback();
             console.log(err);
             throw err
-            
         }
     }
 
     static getCustomerReferent = async(request: Request, h: ResponseToolkit)=>{
 
-        const t = await sequelize.transaction();
-
         try{
-            let customer =  await sequelize.query("SELECT `User`.`id` AS `client id`, `User`.`firstname` AS `client name`, `referent`.`id` AS `referent id`, `referent`.`firstname` AS `referent name` FROM `Users` AS `User` LEFT OUTER JOIN ( `client_has_referent` INNER JOIN `Users` AS `referent` ON `referent`.`id` = `client_has_referent`.`idEmployee`) ON `User`.`id` = `client_has_referent`.`idClient` WHERE `User`.`id` = '"+ request.params.id +"'", { type: sequelize.QueryTypes.SELECT} )
-
-            // console.log(customer)
-            
+            let customer =  await sequelize.query(
+                "SELECT `User`.`id` AS `client id`, `User`.`firstname` AS `client name`, `referent`.`id` AS `referent id`, `referent`.`firstname` AS `referent name` FROM `Users` AS `User` LEFT OUTER JOIN ( `client_has_referent` INNER JOIN `Users` AS `referent` ON `referent`.`id` = `client_has_referent`.`idEmployee`) ON `User`.`id` = `client_has_referent`.`idClient` WHERE `User`.`id` = '"+ request.params.id +"'",
+                { 
+                    type: sequelize.QueryTypes.SELECT
+                } 
+            )            
             return (customer);
         }
         catch(err){
-
             console.log(err);
-            t.rollback();
             throw err;
-            
         }
         
     }
