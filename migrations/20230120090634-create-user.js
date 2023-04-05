@@ -3,6 +3,9 @@
 module.exports = {
   async up(queryInterface , Sequelize ) {
     await queryInterface.createTable('users', {
+                  
+      //Tous les champs sont désormais en snake_case
+
       id: {
         allowNull: false,
         autoIncrement: true,

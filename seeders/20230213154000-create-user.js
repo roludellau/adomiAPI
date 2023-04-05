@@ -5,6 +5,9 @@ module.exports = {
   async up (queryInterface, Sequelize) {
 
     return queryInterface.bulkInsert('users', [
+            
+      //Tous les champs sont désormais en snake_case
+
       {
         first_name: 'John',
         last_name: 'Doe',
