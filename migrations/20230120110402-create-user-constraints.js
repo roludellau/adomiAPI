@@ -5,7 +5,7 @@ module.exports = {
   async up (queryInterface, Sequelize) {
 
     queryInterface.addConstraint('users', {
-      fields: ['idRole'],
+      fields: ['id_role'],
       type: 'foreign key',
       name:'user-role-association',
       references: {
@@ -15,7 +15,7 @@ module.exports = {
     })
 
     queryInterface.addConstraint('users', {
-      fields: ['idAgency'],
+      fields: ['id_agency'],
       type: 'foreign key',
       name:'user-agency-association',
       references: {

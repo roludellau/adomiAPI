@@ -4,17 +4,20 @@ import {
 } from 'sequelize';
 
 export interface UserAttributes{
-  firstName:string;
-  lastName:string;
+  first_name:string;
+  last_name:string;
   email:string;
   password:string;
-  userName:string;
+  user_name:string;
   phone:string;
   street_name:string;
   street_number:number;
   post_code: string;
   city:string;
+  id_role: number;
+  id_agency: number
 }
+
 module.exports = (sequelize: any, DataTypes:any ) => {
   class User extends Model<UserAttributes> 
   implements UserAttributes{
@@ -23,16 +26,18 @@ module.exports = (sequelize: any, DataTypes:any ) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    firstName!:string;
-    lastName!:string;
+    first_name!:string;
+    last_name!:string;
     email!:string;
     password!:string;
-    userName!:string;
+    user_name!:string;
     phone!:string;
     street_name!:string;
     street_number!:number;
     post_code!: string;
     city!:string;
+    id_role!: number;
+    id_agency!: number
 
     static associate(models: any) {
       // define association here
@@ -52,151 +57,143 @@ module.exports = (sequelize: any, DataTypes:any ) => {
       })
     }
   }
+  
+
   User.init({
-    firstName: {
-
+    first_name: {
         type: DataTypes.STRING,
-
         validate:{
-
-          isAlpha: true, // on vérifie qu'il s'agit bien d'un string
-          notEmpty: true, // valeur de champ vide non autorisée
-          len: [2,50] // valeur du nom comprise entre 2 et 50 (ex.)
-
+          isAlpha: { msg: "Vauillez entre un prénom avec des caractères alphabétiques" },
+          notEmpty: { msg: "Veuillez entrer une valeur" },
+          len: { args: [1,255], msg: "Veuillez entrer un prénom contenant entre 1 et 255 lettres"}
         }
-
     },
-//tests avec messages personnalisés
-    lastName: {
 
+    last_name: {
       type: DataTypes.STRING,
-
       validate:{
-          
-        isAlpha: {
-
-          msg: "Veuillez indiquer une chaîne de caractères"
-        },
-
-        notEmpty: true, 
-        len: {
-          args:[2,50],
-          msg: "Veuillez indiquer un nom d'un longueur comprise entre 2 et 50 caractères"
-        }, 
-
+        isAlpha: { msg: "Vauillez entre un prénom avec des caractères alphabétiques" },
+        notEmpty: { msg: "Veuillez entrer une valeur" },
+        len: { args: [1,255], msg: "Veuillez entrer un nom contenant entre 1 et 255 lettres"}
       }
-
     },
 
     email:{
-
       type: DataTypes.STRING,
-      // unique: true, 
-
-      validate:{
-        notEmpty: true,
-        isEmail: true, 
+      unique: { name: "email", msg: "Un compte est déjà associé à cette adresse mail"}, 
+      validate: {
+        notEmpty: { msg: "Veuillez entrer une valeur" },
+        isEmail: { msg: "Veuillez entrer un email valide" }, 
         is:{
           //test regex
           args:[/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g],
           msg: "Veuillez entrer un email valide"
-
         }
       }
     },
+
     password: {
       type:DataTypes.STRING,
-
       validate:{
-
-        notEmpty:{
+        notEmpty: {
           msg: "Veuillez indiquer un mot de passe"
         },
-
-        min:{
-          args:[5],
-          msg: "Votre mot de passe doit contenir au minimum 5 caractères"
+        min: {
+          args:[8],
+          msg: "Votre mot de passe doit contenir au minimum 8 caractères"
+        },
+        is: {
+          args:[/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&µ£\/\\~|\-])[\wÀ-ÖØ-öø-ÿ@$!%*#?&µ£\/\\~|\-]{8,255}$/],
+          msg: "Votre mot de passe doit contenir une lettre, un chiffre, un caractère spécial, et faire au moins 8 caractères"
         }
-        
       }
-
     },
 
-    userName: {
-
+    user_name: {
       type: DataTypes.STRING,
-      unique:true, // à voir si c'est pertinent
-      validate:{
-        notEmpty:{
-          msg: "Veuillez renseigner un nom d'utilisateur"
-        }
-
+      unique: {name: "user_name", msg: "Un compte possède déjà ce nom d'utilisateur"},
+      validate: {
+        notEmpty:{ msg: "Veuillez renseigner un nom d'utilisateur" },
+        len: { args: [3,255], msg: "Veuillez entrer un nom d'utilisateur contenant entre 1 et 255 lettres"}
       }
-    } ,
+    },
 
     phone:{
-      
-      type:DataTypes.STRING(10),
+      type:DataTypes.STRING,
       validate:{
-        isNumeric:{
-          msg:"Veuillez entrer une valeur numérique"
-        },
-
-        notEmpty:{
-          msg:"Veuillez entrer un numéro de téléphone"
-        },
-
-        len:{
-          args:[10, 10],
-          msg:"Veuillez entrer un numéro à 10 chiffres"
-        },
-
-        is:{
-          args: [/^0[0-9].*$/],
-          msg: "Le numéro de téléphone doit commencer par 0"
-        },
-
-
+        isNumeric:{ msg:"Veuillez entrer une valeur numérique" },
+        notEmpty:{ msg:"Veuillez entrer un numéro de téléphone" },
+        len:{ args:[10, 10], msg:"Veuillez entrer un numéro à 10 chiffres" },
+        is:{ args: [/^0[0-9].*$/], msg: "Le numéro de téléphone doit commencer par 0" },
         // validPhone(value: any){
-
         //   let regExp = /^0[0-9].*$/
-
         //   if(!regExp.test(value)){
-
         //     throw new Error("Le numéro de téléphone doit commencer par 0");
-
         //     // return msg
-
         //   }
-
         // }
-        
       }
     },
+
     street_name:{
       type: DataTypes.STRING,
+      validate: {
+        isAlpha: { msg: "Vauillez entre un prénom avec des caractères alphabétiques" },
+        notEmpty:{ msg:"Veuillez entrer un nom de rue" },
+        len:{ args:[1, 255], msg:"Veuillez entrer une valeur entre 1 et 255 caractères" },
+      }
     },
 
     street_number:{
       type: DataTypes.INTEGER,
       validate:{
-        isNumeric:{
-          msg:"Veuillez entrer une valeur numérique"
-        }
+        isNumeric:{ msg:"Veuillez entrer une valeur numérique" },
+        notEmpty:{ msg:"Veuillez entrer un numéro de rue" },
+        len:{ args:[1, 255], msg:"Veuillez entrer une valeur entre 1 et 255 caractères" },
       }
     },
 
     post_code:{
-      type: DataTypes.STRING(5),
+      type: DataTypes.STRING,
+      validate: {
+        isNumeric:{ msg:"Veuillez entrer une valeur numérique" },
+        notEmpty:{ msg:"Veuillez entrer un code postal" },
+        len:{ args:[5, 5], msg:"Veuillez entrer une code postal à 5 caractères" },
+      }
     },
 
-    city: DataTypes.STRING
-  }, {
+    city: {
+      type: DataTypes.STRING,
+      validate: {
+        isAlpha:{ msg:"Veuillez entrer une valeur alphabétique" },
+        notEmpty:{ msg:"Veuillez entrer une ville" },
+        len:{ args:[1, 255], msg:"Veuillez entrer une valeur entre 1 et 255 caractères" },
+      }
+    },
+
+    id_role: {
+      type: DataTypes.INTEGER,
+      validate: {
+        isNumeric:{ msg:"Veuillez entrer une valeur numérique" },
+        notEmpty:{ msg:"Veuillez entrer un id de role" },
+      }
+    },
+
+    id_agency: {
+      type: DataTypes.INTEGER,
+      validate: {
+        isNumeric:{ msg:"Veuillez entrer une valeur numérique" },
+        notEmpty:{ msg:"Veuillez entrer un id d'agence" },
+      }
+    },
+  }, 
+
+  {
     sequelize,
     modelName: 'User',
     timestamps: false,
     tableName: 'users'
-
   });
+
   return User;
 };

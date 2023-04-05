@@ -3,6 +3,7 @@ import { Request, ResponseToolkit } from "hapi";
 const db = require('../models/index')
 import argon2 from 'argon2';
 import boom from '@hapi/boom'
+import { Error } from 'sequelize' 
 const sequelize = db.default.sequelize
 const userModel = db.default.User
 const agencyModel = db.default.Agency
@@ -39,7 +40,7 @@ export default class CustomerController{
                     'post_code', 
                     'city'], 
                 where:{
-                    id: idKey
+                    id: idKey,
                 },
                 include: [
                     {
@@ -62,31 +63,19 @@ export default class CustomerController{
 
 
     static createCustomer = async (request: Request, h: ResponseToolkit)=>{
-
-        try {
-            const userpassword = await argon2.hash(request.query.password as string);
-
-            const test =  await userModel.create({
-                firstName: request.query.firstName,
-                lastName: request.query.lastName,
-                email: request.query.email,
-                password: userpassword,
-                userName: request.query.userName,
-                phone: request.query.phone,
-                street_name: request.query.street_name,
-                street_number: request.query.street_number,
-                post_code: request.query.poste_code,
-                city: request.query.city,
-                idRole: request.query.idRole,
-                idAgency: request.query.idAgency
-            });
-
-            return test
-        }
-        catch(err){
-            console.log(err);
-            boom.serverUnavailable('Erreur inconnue')
-        }
+        let info = request.query;
+        
+            try {
+                info.password = await argon2.hash(info.password as string);
+                info.id_role = '1';
+                const createdUser = await userModel.create(info);
+                delete createdUser.dataValues.password
+                return createdUser
+            }
+            catch (error) {
+                console.log(error)
+                return boom.badImplementation()
+            }
         
     }
 
