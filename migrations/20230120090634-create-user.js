@@ -10,41 +10,51 @@ module.exports = {
         onDelete:'CASCADE',
         type: Sequelize.INTEGER
       },
-      firstName: {
+      first_name: {
+        allowNull: false,
         type: Sequelize.STRING
       },
-      lastName: {
+      last_name: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       email: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       password: {
+        allowNull: false,
         type: Sequelize.STRING
       },
-      userName: {
+      user_name: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       phone: {
+        allowNull: false,
         type: Sequelize.STRING(10)
       },
       street_name: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       street_number: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       post_code: {
+        allowNull: false,
         type: Sequelize.STRING(5)
       },
       city: {
+        allowNull: false,
         type: Sequelize.STRING
       },
-      idRole: {
+      id_role: {
         allowNull:false,
         type:Sequelize.INTEGER,
       },
-      idAgency: {
+      id_agency: {
         allowNull:false,
         type:Sequelize.INTEGER,
       }
