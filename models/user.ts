@@ -43,11 +43,11 @@ module.exports = (sequelize: any, DataTypes:any ) => {
       // define association here
       User.belongsTo(models.User_Role, {
         as: 'role',
-        foreignKey:'idRole',
+        foreignKey:'id_role',
       })
       User.belongsTo(models.Agency, {
         as: 'agency',
-        foreignKey: 'idAgency'
+        foreignKey: 'id_agency'
       })
 
       User.belongsToMany(models.User,{

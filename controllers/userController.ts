@@ -61,20 +61,21 @@ export default class UserController {
         let [username, password] = [payload.username, payload.password]
 
         if (!username || !password){
-            return boom.badData('Les éléments fournis sont mal formatés')
+            return boom.badData('Les éléments fournis sont mal formatés: veuillez fournir un nom d\'utilisateur et un mot de passe')
         }
 
         const user = await userModel.findOne({
-            attributes: ['id', 'firstName', 'lastname', 'email', 'password'],
-            where: { userName: username },
+            attributes: ['id', 'first_name', 'last_name', 'email', 'password'],
+            where: { user_name: username },
             include:{
                 association: 'role',
                 attributes:['label'],
             }
         })
-        .catch((err: Error)=> console.log(err))
+        .catch((err: Error)=> { console.log(err); return false})
 
-        if (!user || !await argon2.verify(user.password, password)){
+        if (user == false) return boom.badImplementation('Une erreur inconnue est survenue')
+        if (user == undefined || !await argon2.verify(user.password, password)){
             return boom.unauthorized('Le nom d\'utilisateur ou le mot de passe est incorrect')
         }
 
@@ -93,7 +94,7 @@ export default class UserController {
         const t = await sequelize.transaction()
         try {
             const user = await userModel.findOne({
-                attributes: ['firstName', 'lastName', 'userName', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city'],
+                attributes: ['first_name', 'last_name', 'user_name', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city'],
                 where: { id: id }
             })
             return user

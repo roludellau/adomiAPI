@@ -3,7 +3,8 @@ import { Request, ResponseToolkit } from "hapi";
 const db = require('../models/index')
 import argon2 from 'argon2';
 import boom from '@hapi/boom'
-import { Error, ValidationError, ValidationErrorItem} from 'sequelize' 
+import { Error, ValidationError, ValidationErrorItem } from 'sequelize' 
+const Op = require('sequelize')
 import { UserAttributes } from '../models/user'
 const sequelize = db.default.sequelize
 const userModel = db.default.User
@@ -27,13 +28,12 @@ export default class CustomerController{
 
 
     static getOneCustomer = async (request: Request, h: ResponseToolkit) => {
-
         let idKey = request.params.id;
 
             const customer = await userModel.findOne({
                 attributes: [
-                    'firstname', 
-                    'lastname', 
+                    'first_name', 
+                    'last_name', 
                     'email', 
                     'phone', 
                     'street_name', 
@@ -53,7 +53,7 @@ export default class CustomerController{
                     }
                 
                 ]})
-                .catch(async (err: Error) => {
+                .catch((err: Error) => {
                     console.log(err)
                     boom.serverUnavailable('Erreur inconnue')
                 })
@@ -65,11 +65,18 @@ export default class CustomerController{
     static createCustomer = async (request: Request, h: ResponseToolkit) => {
         let info = request.query;
         
+
         const regex = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&µ£\/\\~|\-])[\wÀ-ÖØ-öø-ÿ@$!%*#?&µ£~|\-]{8,255}$/)
         if (!info.password) return boom.badData('Le champs password n\'a pas été fourni')
         if (!(info.password as string).match(regex)){
             return boom.badData('Votre mot de passe doit contenir une lettre, un chiffre, un caractère spécial, et faire au moins 8 caractères')
         }
+
+        const previousUsername = await userModel.findOne({attributes:['id'], where: {user_name: info.user_name || null}})
+        const previousEmail = await userModel.findOne({attributes:['id'], where: {email: info.email || null}})
+
+        if (previousUsername) return boom.conflict('Un utilisateur possède déjà le même nom d\'utilisateur')
+        if (previousEmail) return boom.conflict('Un utilisateur possède déjà le même email')
 
         try {
             info.password = await argon2.hash(info.password as string);
@@ -91,6 +98,7 @@ export default class CustomerController{
         }
         
     }
+
 
     static updateCustomer = async (request: Request, h: ResponseToolkit) =>{
 
