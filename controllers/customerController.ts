@@ -26,7 +26,7 @@ export default class CustomerController{
     }
 
 
-    static getOneCustomer = async (request: Request, h: ResponseToolkit)=>{
+    static getOneCustomer = async (request: Request, h: ResponseToolkit) => {
 
         let idKey = request.params.id;
 
@@ -62,7 +62,7 @@ export default class CustomerController{
     }
 
 
-    static createCustomer = async (request: Request, h: ResponseToolkit)=>{
+    static createCustomer = async (request: Request, h: ResponseToolkit) => {
         let info = request.query;
         
         const regex = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&µ£\/\\~|\-])[\wÀ-ÖØ-öø-ÿ@$!%*#?&µ£~|\-]{8,255}$/)
