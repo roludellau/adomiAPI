@@ -19,6 +19,7 @@ export interface UserAttributes{
 }
 
 module.exports = (sequelize: any, DataTypes:any ) => {
+  
   class User extends Model<UserAttributes> 
   implements UserAttributes{
     /**
@@ -45,6 +46,7 @@ module.exports = (sequelize: any, DataTypes:any ) => {
         as: 'role',
         foreignKey:'id_role',
       })
+
       User.belongsTo(models.Agency, {
         as: 'agency',
         foreignKey: 'id_agency'

@@ -63,8 +63,7 @@ export default class CustomerController{
 
 
     static createCustomer = async (request: Request, h: ResponseToolkit) => {
-        let info = request.query;
-        
+        let info = request.query
 
         const regex = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&µ£\/\\~|\-])[\wÀ-ÖØ-öø-ÿ@$!%*#?&µ£~|\-]{8,255}$/)
         if (!info.password) return boom.badData('Le champs password n\'a pas été fourni')
@@ -72,27 +71,31 @@ export default class CustomerController{
             return boom.badData('Votre mot de passe doit contenir une lettre, un chiffre, un caractère spécial, et faire au moins 8 caractères')
         }
 
-        const previousUsername = await userModel.findOne({attributes:['id'], where: {user_name: info.user_name || null}})
-        const previousEmail = await userModel.findOne({attributes:['id'], where: {email: info.email || null}})
+        const previousUsername = await userModel.findOne({where: {user_name: info.user_name || null}})
+        const previousEmail = await userModel.findOne({where: {email: info.email || null}})
 
         if (previousUsername) return boom.conflict('Un utilisateur possède déjà le même nom d\'utilisateur')
         if (previousEmail) return boom.conflict('Un utilisateur possède déjà le même email')
 
+
         try {
             info.password = await argon2.hash(info.password as string);
             info.id_role = '1';
-            const createdUser = await userModel.create(info);
+            const createdUser = await userModel.create(info)
             delete createdUser.dataValues.password
             return createdUser
         }
         catch (error: any) {
             if (error?.errors){
                 type ApiError = { message: string, field: string|null }
-                let errorArray:ApiError[] = []
-                error.errors.map((item:ValidationErrorItem) => errorArray.push({ field: item.path, message: item.message }))
-                return {
-                    errors: errorArray
-                }
+                let errorList:ApiError[] = []
+                error.errors.map((item:ValidationErrorItem) => errorList.push({ field: item.path, message: item.message }))
+                return h.response({
+                    statusCode: 422,
+                    statusName: "Unprocessable Entity",
+                    errors: errorList
+                })
+                .code(422)
             }
             else return boom.badImplementation()
         }
