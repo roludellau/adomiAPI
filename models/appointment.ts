@@ -29,13 +29,101 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
     }
   }
   Appointment.init({
-    date: DataTypes.DATE,
-    startHour: DataTypes.TIME,
-    endHour: DataTypes.TIME,
-    streetName: DataTypes.STRING,
-    streetNumber: DataTypes.INTEGER,
-    postCode: DataTypes.STRING,
-    city: DataTypes.STRING
+    date: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      validate:{
+
+        isDate: true,
+        notNull: {
+          msg: "Veuillez renseigner une date"
+        }
+
+      }
+    },
+
+    startHour: {
+
+      type: DataTypes.TIME,
+      allowNull: true,
+      validate:{
+
+        isNumeric: true,
+        notNull: {
+          msg: "Veuillez inidquer l'heure de début"
+        }
+      }
+    }, 
+    
+    endHour: {
+      type: DataTypes.TIME,
+      allowNull: true,
+
+      validate:{
+        isNumeric: true,
+        notNull: {
+          msg: "Veuillez inidquer l'heure de fin"
+        }
+      }
+    },
+
+    streetName: {
+
+      type: DataTypes.STRING,
+      allowNull: true,
+
+      validate:{
+        isAlpha:{
+          msg: "Veuillez indiquer un nom de rue valide"
+        },
+        notNull: {
+          msg: "Veuillez renseigner un nom de rue"
+        },
+      }
+    },
+    streetNumber:{
+
+      type:  DataTypes.INTEGER,
+      allowNull: true, 
+
+      validate:{
+      isNumeric: {
+          msg: "Indiquer un numéro valide",
+        },
+        notNull: {
+          msg: "Veuillez renseigner un numéro de rue"
+        },
+      }
+    },
+
+    postCode: {
+      
+      type: DataTypes.STRING,
+      allowNull: true,
+
+      validate:{
+
+        isNumeric: {
+          msg: "Indiquer un code postal valide"
+        },
+        len:{
+          args:[5, 5],
+          msg: "Code postal à 5 chiffres !"
+        }
+      }
+
+    },
+    city: {
+      type: DataTypes.STRING,
+      allowNull: true,
+
+      validate:{
+        
+        notNull: {
+          msg: "Veuillez indiquer une ville"
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'Appointment',
