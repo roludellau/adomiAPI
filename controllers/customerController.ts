@@ -176,7 +176,7 @@ export default class CustomerController{
                 group:['idCarer'],
                 include:{
                     association: 'carer',
-                    attributes:['firstname', 'lastname', 'phone'],
+                    attributes:['first_name', 'last_name', 'phone'],
                 }})
 
             return carer
