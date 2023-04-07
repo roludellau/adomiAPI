@@ -173,6 +173,7 @@ export default class CustomerController{
         try{
             let carer = await missionModel.findAll({attributes:['idCarer'], 
                 where:{idClient: request.params.id},
+                group:['idCarer'],
                 include:{
                     association: 'carer',
                     attributes:['firstname', 'lastname', 'phone'],
