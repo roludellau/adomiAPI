@@ -31,7 +31,7 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
   Appointment.init({
     date: {
       type: DataTypes.DATE,
-      allowNull: true,
+      allowNull: false,
       validate:{
 
         isDate: true,
@@ -45,7 +45,7 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
     startHour: {
 
       type: DataTypes.TIME,
-      allowNull: true,
+      allowNull: false,
       validate:{
 
         isNumeric: true,
@@ -57,7 +57,7 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
     
     endHour: {
       type: DataTypes.TIME,
-      allowNull: true,
+      allowNull: false,
 
       validate:{
         isNumeric: true,
@@ -70,7 +70,7 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
     streetName: {
 
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
 
       validate:{
         isAlpha:{
@@ -84,7 +84,7 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
     streetNumber:{
 
       type:  DataTypes.INTEGER,
-      allowNull: true, 
+      allowNull: false, 
 
       validate:{
       isNumeric: {
@@ -99,7 +99,7 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
     postCode: {
       
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
 
       validate:{
 
@@ -115,7 +115,7 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
     },
     city: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
 
       validate:{
         

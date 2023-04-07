@@ -8,7 +8,7 @@ const missionModel = db.default.Mission
 const customerModel = db.default.customer
 
 
-export default class UserController {
+export default class MissionController {
 
 
 
@@ -18,23 +18,23 @@ export default class UserController {
         try{
 
             console.log(request.query)
-            const create =  await missionModel.create({
-                startDate: request.query.startDate,
-                startHour: request.query.startHour,
-                endHour: request.query.endHour,
-                streetName: request.query.streetName,
-                streetNumber: request.query.streetNumber,
-                postCode: request.query.postCode,
-                city: request.query.city,
-                validated: request.query.validated,
-                idClient: request.query.idClient,
-                idEmployee: request.query.idEmployee,
-                idCarer: request.query.idCarer,
-                idRecurence: request.query.idRecurence
+            // const create =  await missionModel.create({
+            //     startDate: request.query.startDate,
+            //     startHour: request.query.startHour,
+            //     endHour: request.query.endHour,
+            //     streetName: request.query.streetName,
+            //     streetNumber: request.query.streetNumber,
+            //     postCode: request.query.postCode,
+            //     city: request.query.city,
+            //     validated: request.query.validated,
+            //     idClient: request.query.idClient,
+            //     idEmployee: request.query.idEmployee,
+            //     idCarer: request.query.idCarer,
+            //     idRecurence: request.query.idRecurence
     
-            });
+            // });
 
-            return create
+            // return create
         }
         catch(err){
             console.log(err);
