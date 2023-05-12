@@ -17,7 +17,7 @@ export default class CustomerController{
     static getAllCustomers = async () => {
 
         try{
-          const customers = await userModel.findAll({attributes: ['firstname'], where:{idRole: 2}})
+          const customers = await userModel.findAll({attributes: ['first_name'], where:{idRole: 2}})
             return customers;
         }
         catch(err){
@@ -106,13 +106,13 @@ export default class CustomerController{
     static updateCustomer = async (request: Request, h: ResponseToolkit) =>{
 
         try {
-            let customer = await userModel.findOne({attributes:['id','firstName', 'lastname', 'email', 'userName', 'phone', 'street_name', 'street_number', 'post_code', 'city', 'idAgency'], where:{id: request.params.id}});
+            let customer = await userModel.findOne({attributes:['id','first_name', 'last_name', 'email', 'user_name', 'phone', 'street_name', 'street_number', 'post_code', 'city', 'idAgency'], where:{id: request.params.id}});
             if(customer){
                 const updatedCustomer = await customer.update({
-                    firstName: request.query.firstName,
-                    lastName: request.query.lastName,
+                    first_name: request.query.first_name,
+                    last_name: request.query.last_name,
                     email: request.query.email,
-                    userName: request.query.userName,
+                    user_name: request.query.user_name,
                     phone: request.query.phone,
                     street_name: request.query.street_name,
                     street_number: request.query.street_number,
@@ -216,7 +216,7 @@ export default class CustomerController{
 
         try{
             let customer =  await sequelize.query(
-                "SELECT `User`.`id` AS `client id`, `User`.`firstname` AS `client name`, `referent`.`id` AS `referent id`, `referent`.`firstname` AS `referent name` FROM `Users` AS `User` LEFT OUTER JOIN ( `client_has_referent` INNER JOIN `Users` AS `referent` ON `referent`.`id` = `client_has_referent`.`idEmployee`) ON `User`.`id` = `client_has_referent`.`idClient` WHERE `User`.`id` = '"+ request.params.id +"'",
+                "SELECT `User`.`id` AS `client id`, `User`.`first_name` AS `client name`, `referent`.`id` AS `referent id`, `referent`.`first_name` AS `referent name` FROM `Users` AS `User` LEFT OUTER JOIN ( `client_has_referent` INNER JOIN `Users` AS `referent` ON `referent`.`id` = `client_has_referent`.`idEmployee`) ON `User`.`id` = `client_has_referent`.`idClient` WHERE `User`.`id` = '"+ request.params.id +"'",
                 { 
                     type: sequelize.QueryTypes.SELECT
                 } 
