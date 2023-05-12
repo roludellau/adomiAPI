@@ -208,6 +208,20 @@ const init = async () => {
         }
     ])
     
+    //APPOINTMENT
+    server.route([
+        {
+            method: 'GET',
+            path:'/appointments',
+            handler: AppointmentController.getAppointments
+        },
+
+        {
+            method: 'GET',
+            path:'/appointments/{id}',
+            handler: AppointmentController.getAppointment
+        }
+    ])
 
     //Missions
     server.route([

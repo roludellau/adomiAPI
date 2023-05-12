@@ -20,7 +20,7 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
     static associate(models: any) {
       Appointment.belongsTo(models.User, {
         as: 'carer',
-        foreignKey: 'id_carer'
+        foreignKey: 'idCarer'
       })
       Appointment.belongsTo(models.Mission, {
         as: 'mission',

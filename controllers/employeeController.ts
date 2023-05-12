@@ -15,7 +15,7 @@ export default class EmployeeController {
         const t = await sequelize.transaction()
         try {
             const employees = await userModel.findAll({
-                attributes:['id','firstname','lastname'],
+                attributes:['id','first_name','last_name'],
                 include: [
                     {
                         association: 'role',
@@ -38,7 +38,7 @@ export default class EmployeeController {
         const idEmployee = request.params.idEmployee
         try {
             const employee = await userModel.findOne({
-                attributes:['id','firstname','lastname','email','username','phone','street_name','street_number','post_code','city'],
+                attributes:['id','first_name','last_name','email','username','phone','street_name','street_number','post_code','city'],
                 include: [
                     {
                         association: 'role',
@@ -68,7 +68,7 @@ export default class EmployeeController {
 
         try{
             const employees = userModel.findAll({
-                attributes:['id','firstname','lastname','email','username','phone'],
+                attributes:['id','first_name','last_name','email','username','phone'],
                 include:[{
                     association:'agency',
                     attributes:['id','name','adress'],
@@ -93,11 +93,11 @@ export default class EmployeeController {
         
         try {
             const employee = await userModel.create({
-                firstName: input.firstname,
-                lastName: input.lastname,
+                first_name: input.first_name,
+                last_name: input.last_name,
                 email: input.email,
                 password: userpassword,
-                userName: input.username,
+                user_name: input.username,
                 phone: input.phone,
                 street_name: input.streetname,
                 street_number: input.streetnumber,
@@ -141,11 +141,11 @@ export default class EmployeeController {
 
             if(user){
                 userModel.update({
-                    firstName: input.firstname,
-                    lastName: input.lastname,
+                    first_name: input.first_name,
+                    last_name: input.last_name,
                     email: input.email,
                     password: input.password,
-                    userName: input.username,
+                    user_name: input.username,
                     phone: input.phone,
                     street_name: input.streetname,
                     street_number: input.streetnumber,

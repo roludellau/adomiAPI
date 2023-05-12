@@ -4,11 +4,11 @@ import {
 } from 'sequelize';
 
 export interface UserAttributes{
-  firstName:string;
-  lastName:string;
+  first_name:string;
+  last_name:string;
   email:string;
   password:string;
-  userName:string;
+  user_name:string;
   phone:string;
   street_name:string;
   street_number:number;
@@ -23,11 +23,11 @@ module.exports = (sequelize: any, DataTypes:any ) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    firstName!:string;
-    lastName!:string;
+    first_name!:string;
+    last_name!:string;
     email!:string;
     password!:string;
-    userName!:string;
+    user_name!:string;
     phone!:string;
     street_name!:string;
     street_number!:number;
@@ -53,7 +53,7 @@ module.exports = (sequelize: any, DataTypes:any ) => {
     }
   }
   User.init({
-    firstName: {
+    first_name: {
 
         type: DataTypes.STRING,
 
@@ -67,7 +67,7 @@ module.exports = (sequelize: any, DataTypes:any ) => {
 
     },
 //tests avec messages personnalisés
-    lastName: {
+    last_name: {
 
       type: DataTypes.STRING,
 
@@ -122,7 +122,7 @@ module.exports = (sequelize: any, DataTypes:any ) => {
 
     },
 
-    userName: {
+    user_name: {
 
       type: DataTypes.STRING,
       unique:true, // à voir si c'est pertinent

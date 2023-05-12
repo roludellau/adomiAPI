@@ -23,7 +23,7 @@ export default class AppointmentController{
                     },
                     {
                         association: 'carer',
-                        attributes:['firstName', 'lastName', 'userName', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city']
+                        attributes:['first_name', 'last_name', 'user_name', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city']
                     }
                 
                 ]});
@@ -37,20 +37,25 @@ export default class AppointmentController{
     }
 
     static getAppointment = async(request: Request, h: ResponseToolkit) => {
-        const t = await sequelize.transaction()
+        // const t = await sequelize.transaction()
         const id = request.params.id
 
         try{
-            const appointments = appointmentsModel.findOne({
+            const appointments = await appointmentsModel.findOne({
                 where:{id:id},
-                include:{
-                    association:'mission'
-                }
+                include:[{
+                    association:'mission',
+                    include:{
+                        association:'client',
+                        // where:{idClient: id}
+                    }
+                }]
             })
+            console.log(appointments)
             return appointments
         }
         catch (err){
-            t.rollback()
+            // t.rollback()
             console.log(err)
             throw err
         }

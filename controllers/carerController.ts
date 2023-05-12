@@ -13,7 +13,7 @@ const Appointment = db.default.Appointment
 export default class CarerController {
 
    static createCarer = async (req: Request, h: ResponseToolkit) => {
-        if (await User.findOne({where:{lastName: req.query.lastName, firstName: req.query.firstName}})){
+        if (await User.findOne({where:{last_name: req.query.last_name, first_name: req.query.first_name}})){
             return boom.conflict('Un utilisateur de ce nom existe déjà')
         }
 
@@ -186,7 +186,7 @@ export default class CarerController {
             where:{idCarer: req.params.id},
             include:{
                 association: 'client',
-                attributes:['firstname', 'lastname', 'phone'],
+                attributes:['first_name', 'last_name', 'phone'],
             }
         })
         .then((customers:PromiseFulfilledResult<any>) => customers)
