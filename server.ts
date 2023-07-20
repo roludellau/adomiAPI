@@ -104,8 +104,12 @@ const init = async () => {
             method: 'GET',
             path:'/customers',
             handler: CustomerController.getAllCustomers
-        },
-
+        }, 
+        {
+            method: 'GET',
+            path:'/customers/search',
+            handler: CustomerController.customerSearch
+        }, 
         {
             method: 'GET',
             path:'/customers/{id}',

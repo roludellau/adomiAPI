@@ -58,9 +58,11 @@ export default class UserController {
             password: string
         }
         let payload = request.payload as Payload
+
         let [username, password] = [payload.username, payload.password]
 
         if (!username || !password){
+            console.error(typeof payload)
             return boom.badData('Les éléments fournis sont mal formatés: veuillez fournir un nom d\'utilisateur et un mot de passe')
         }
 
@@ -85,22 +87,16 @@ export default class UserController {
         }
     }
 
-    static getUserInfo = async (request: Request, h: ResponseToolkit) => {
-
-        let auth = request.auth
-        console.log(auth)
-        
+    static getUserInfo = async (request: Request, h: ResponseToolkit) => {        
         let id = request.params.id
-        const t = await sequelize.transaction()
         try {
-            const user = await userModel.findOne({
-                attributes: ['first_name', 'last_name', 'user_name', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city'],
+            return await userModel.findOne({
+                attributes: ['id', 'first_name', 'last_name', 'user_name', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city'],
                 where: { id: id }
             })
-            return user
         }
         catch (err) {
-            await t.rollback()
+            console.log(err)
             throw err
         }
         
