@@ -4,7 +4,9 @@ const db = require('../models/index')
 import argon2 from 'argon2';
 import boom from '@hapi/boom'
 import { Error, ValidationError, ValidationErrorItem } from 'sequelize' 
-const Op = require('sequelize')
+const Sequelize = require('Sequelize')
+const Op = Sequelize.Op
+
 import { UserAttributes } from '../models/user'
 const sequelize = db.default.sequelize
 const userModel = db.default.User
@@ -15,13 +17,68 @@ const appointmentModel = db.default.Appointment
 export default class CustomerController{
 
     static getAllCustomers = async () => {
+        try {await sequelize.authenticate()}
+        catch {return boom.serverUnavailable('Le serveur de bdd ne répond pas')}
 
         try{
-          const customers = await userModel.findAll({attributes: ['first_name'], where:{idRole: 2}})
+          const customers = await userModel.findAll({attributes: ['first_name'], where:{id_role: 2}})
             return customers;
         }
         catch(err){
             console.log(err);
+            throw boom.badImplementation()
+        }
+        
+    }
+ 
+    static customerSearch = async (req: Request, h: ResponseToolkit) => {
+        const query = req.query?.q
+        if (!query){
+            throw boom.badRequest('Vous devez indiquer un texte à rechercher en query, avec "q=votreQuery"')
+        }
+
+        const splitQuery = (query as string).split(" ")
+
+        try {await sequelize.authenticate()}
+        catch {return boom.serverUnavailable('Le serveur de bdd ne répond pas')}
+
+        
+
+        try{
+            let customers: UserAttributes[] = []
+
+            for (const queryChunk of splitQuery) {
+                const results = await userModel.findAll({
+                    attributes: ['first_name', 'last_name', 'email', 'user_name', 'phone', 'street_name', 
+                                 'street_number', 'post_code', 'city', 'id_agency'], 
+                    where:{
+                        id_role: 2,
+                        [Op.or]: [
+                            { first_name: {[Op.like]: '%'+queryChunk+'%'} },
+                            { last_name: {[Op.like]: '%'+queryChunk+'%'} },
+                            { user_name: {[Op.like]: '%'+queryChunk+'%'} },
+                        ]
+                    }
+                })
+                loop1:
+                for (let res of results){
+                    const email = res.email
+                    loop2:
+                    for (let cust of customers) {
+                        if (cust.email == email) {
+                            continue loop1
+                        }
+                    }
+                    customers.push(res)
+                }
+            }
+
+            console.log("yoyo")
+            return customers;
+        }
+        catch(err){
+            console.log(err)
+            throw boom.badImplementation()
         }
         
     }
