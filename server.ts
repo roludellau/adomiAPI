@@ -172,6 +172,11 @@ const init = async () => {
             handler: CarerController.getCarerById
         },
         {
+            method: 'GET',
+            path:'/carers/search',
+            handler: CarerController.carerSearch
+        }, 
+        {
             method: 'PATCH',
             path: '/carers/{id}',
             handler: CarerController.updateCarer
