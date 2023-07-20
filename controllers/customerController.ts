@@ -33,16 +33,25 @@ export default class CustomerController{
  
     static customerSearch = async (req: Request, h: ResponseToolkit) => {
         const query = req.query?.q
+        const page = parseInt(req.query?.page as string)
         if (!query){
             throw boom.badRequest('Vous devez indiquer un texte à rechercher en query, avec "q=votreQuery"')
         }
+        if (!page || isNaN(page) || page < 1){
+            throw boom.badRequest('Vous devez indiquer le numéro de page en query (+ que 0)')
+        }
 
-        const splitQuery = (query as string).split(" ")
+        let splitQuery: string[] = (query as string).split(" ")
+        // Inverting first and second words to get results based on lastname first
+        const [two, one] = [splitQuery[1], splitQuery[0]]
+        splitQuery[0] = two
+        splitQuery[1] = one
+
+        let sqlLimit = 50
+        let sqlOffset = Math.floor(50 * (page - 1))
 
         try {await sequelize.authenticate()}
         catch {return boom.serverUnavailable('Le serveur de bdd ne répond pas')}
-
-        
 
         try{
             let customers: UserAttributes[] = []
@@ -52,13 +61,16 @@ export default class CustomerController{
                     attributes: ['first_name', 'last_name', 'email', 'user_name', 'phone', 'street_name', 
                                  'street_number', 'post_code', 'city', 'id_agency'], 
                     where:{
-                        id_role: 2,
+                        id_role: 1,
                         [Op.or]: [
                             { first_name: {[Op.like]: '%'+queryChunk+'%'} },
                             { last_name: {[Op.like]: '%'+queryChunk+'%'} },
                             { user_name: {[Op.like]: '%'+queryChunk+'%'} },
+                            { email: {[Op.like]: '%'+queryChunk+'%'} },
                         ]
-                    }
+                    },
+                    offset: sqlOffset,
+                    limit : sqlLimit,
                 })
                 loop1:
                 for (let res of results){
@@ -73,7 +85,6 @@ export default class CustomerController{
                 }
             }
 
-            console.log("yoyo")
             return customers;
         }
         catch(err){
