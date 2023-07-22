@@ -187,6 +187,11 @@ const init = async () => {
             method: 'GET',
             path: '/carers/{id}/appointments', 
             handler: CarerController.getAppointments
+        },
+        {
+            method: 'GET',
+            path: '/carers/{id}/latestappointments',
+            handler: CarerController.getLatestAppointments
         }
     ])
         //AVAILABILITIES

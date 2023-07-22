@@ -19,13 +19,20 @@ export default class AppointmentController{
             const appointments = await appointmentsModel.findAll({ 
                 include: [
                     { 
-                        association: 'mission', 
+                        association: 'mission',
+                        include:{
+                            association:'client',
+                            // where:{idClient: id}
+                        }
                     },
                     {
                         association: 'carer',
                         attributes:['first_name', 'last_name', 'user_name', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city']
                     }
                 
+                ],
+                order: [
+                        ['date', 'DESC']
                 ]});
             return appointments
         }
