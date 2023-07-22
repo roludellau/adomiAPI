@@ -5,7 +5,7 @@ const {
   Model
 } = require('sequelize');
 
-module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any; INTEGER: any; }) => {
+module.exports = (sequelize: any, DataTypes: { DATEONLY: any; TIME: any; STRING: any; INTEGER: any; }) => {
 
   class Appointment extends Model {
     
@@ -30,7 +30,7 @@ module.exports = (sequelize: any, DataTypes: { DATE: any; TIME: any; STRING: any
   }
   Appointment.init({
     date: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: false,
       validate:{
 
