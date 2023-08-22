@@ -297,7 +297,7 @@ export default class CarerController {
 
             for (const queryChunk of splitQuery) {
                 const results = await User.findAll({
-                    attributes: ['first_name', 'last_name', 'email', 'user_name', 'phone', 'street_name', 
+                    attributes: ['id', 'first_name', 'last_name', 'email', 'user_name', 'phone', 'street_name', 
                                  'street_number', 'post_code', 'city', 'id_agency'], 
                     where:{
                         id_role: 3,

@@ -14,7 +14,7 @@ const agencyModel = db.default.Agency
 const missionModel = db.default.Mission
 const appointmentModel = db.default.Appointment
 
-export default class CustomerController{
+export default class CustomerController {
 
     static getAllCustomers = async () => {
         try {await sequelize.authenticate()}
@@ -41,6 +41,8 @@ export default class CustomerController{
             throw boom.badRequest('Vous devez indiquer le numéro de page en query (+ que 0)')
         }
 
+        console.log("page =", page)
+
         let splitQuery: string[] = (query as string).split(" ")
         // Inverting first and second words to get results based on lastname first
         const [two, one] = [splitQuery[1], splitQuery[0]]
@@ -58,7 +60,7 @@ export default class CustomerController{
 
             for (const queryChunk of splitQuery) {
                 const results = await userModel.findAll({
-                    attributes: ['first_name', 'last_name', 'email', 'user_name', 'phone', 'street_name', 
+                    attributes: ['id', 'first_name', 'last_name', 'email', 'user_name', 'phone', 'street_name', 
                                  'street_number', 'post_code', 'city', 'id_agency'], 
                     where:{
                         id_role: 1,

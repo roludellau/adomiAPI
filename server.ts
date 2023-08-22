@@ -258,7 +258,13 @@ const init = async () => {
             method: 'DELETE',
             path: '/missions/{id}',
             handler: MissionController.deleteMission
-        }])
+        },
+        {
+            method: 'GET',
+            path: '/users/{id}/missions',
+            handler: MissionController.getMissionsByUser
+        },
+    ])
 
     await server.start();
     console.log('Server running on %s', server.info.uri);

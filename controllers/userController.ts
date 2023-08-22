@@ -89,6 +89,10 @@ export default class UserController {
 
     static getUserInfo = async (request: Request, h: ResponseToolkit) => {        
         let id = request.params.id
+        if (isNaN(parseInt(id))){
+            return boom.badData("Veuillez fournir un nombre entier comme Id en query param")
+        }
+
         try {
             return await userModel.findOne({
                 attributes: ['id', 'first_name', 'last_name', 'user_name', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city'],
@@ -99,8 +103,6 @@ export default class UserController {
             console.log(err)
             throw err
         }
-        
     }
-
 }
 
