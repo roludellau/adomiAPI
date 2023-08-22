@@ -1,6 +1,7 @@
 import { Request, ResponseToolkit } from "hapi";
 import Jwt from '@hapi/jwt';
 import argon2 from 'argon2';
+import boom from '@hapi/boom'
 import * as fs from 'fs/promises';
 const db = require('../models/index')
 const sequelize = db.default.sequelize
@@ -160,4 +161,37 @@ export default class MissionController {
         
     }
     
+
+    static async getMissionsByUser(r:Request, h: ResponseToolkit){
+        const userId = r.params.id
+        let role = r.query.role
+        if (isNaN(parseInt(userId))){
+            return boom.badData("Veuillez fournir un nombre entier comme ID dans l'url")
+        }
+        if (role != "client" && role != "carer" && role != "employee") {
+            return boom.badData("Veuillez fournir le role de l'utilisateur en query param (?role=client|carer|employee)")
+        }
+
+        role = role.charAt(0).toUpperCase() + role.slice(1)
+
+        const missions = missionModel.findAll({
+            attributes: [
+                'id', 'startHour', 'endHour', 'startDate',  'validated', 'idClient', 'idEmployee', 'idCarer', 'idRecurence'
+            ],
+            where: { 
+                ["id"+role]: userId
+            }
+        })
+        .catch((err: Error) => {
+            console.log(err)
+            throw boom.boomify(err)
+        })
+
+        if (!missions){
+            return
+        }
+        
+        return missions
+    }
+
 }
