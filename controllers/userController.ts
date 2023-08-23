@@ -95,7 +95,7 @@ export default class UserController {
 
         try {
             return await userModel.findOne({
-                attributes: ['id', 'first_name', 'last_name', 'user_name', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city'],
+                attributes: ['id', 'first_name', 'last_name', 'user_name', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city', 'id_role', 'id_agency'],
                 where: { id: id }
             })
         }

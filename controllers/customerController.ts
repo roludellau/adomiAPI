@@ -21,7 +21,7 @@ export default class CustomerController {
         catch {return boom.serverUnavailable('Le serveur de bdd ne répond pas')}
 
         try{
-          const customers = await userModel.findAll({attributes: ['first_name'], where:{id_role: 1}})
+          const customers = await userModel.findAll({attributes: ['id', 'first_name', 'last_name'], where:{id_role: 1}})
             return customers;
         }
         catch(err){

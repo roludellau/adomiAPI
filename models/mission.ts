@@ -58,30 +58,30 @@ module.exports = (sequelize: any, DataTypes: { INTEGER: any; DATE: any; TIME: an
       }
     },
 
-    startHour: {
+    // startHour: {
 
-      type: DataTypes.TIME,
-      allowNull: false,
-      validate:{
+    //   type: DataTypes.TIME,
+    //   allowNull: false,
+    //   validate:{
 
-        isNumeric: true,
-        notNull: {
-          msg: "Veuillez inidquer l'heure de début"
-        }
-      }
-    }, 
+    //     isNumeric: true,
+    //     notNull: {
+    //       msg: "Veuillez inidquer l'heure de début"
+    //     }
+    //   }
+    // }, 
     
-    endHour: {
-      type: DataTypes.TIME,
-      allowNull: false,
+    // endHour: {
+    //   type: DataTypes.TIME,
+    //   allowNull: false,
 
-      validate:{
-        isNumeric: true,
-        notNull: {
-          msg: "Veuillez inidquer l'heure de fin"
-        }
-      }
-    },
+    //   validate:{
+    //     isNumeric: true,
+    //     notNull: {
+    //       msg: "Veuillez inidquer l'heure de fin"
+    //     }
+    //   }
+    // },
 
     streetName: {
 
