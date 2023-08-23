@@ -13,6 +13,11 @@ module.exports = {
         name: 'Agence des colombes',    
         adress: '97 boulevard de la buse',
       },
+      {
+        name: 'Agence des pies',    
+        adress: '13 avenue du Faucon',
+      },
+
 
   ], {});
 

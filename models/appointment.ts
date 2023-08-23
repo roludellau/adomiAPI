@@ -28,6 +28,7 @@ module.exports = (sequelize: any, DataTypes: { DATEONLY: any; TIME: any; STRING:
       })
     }
   }
+  
   Appointment.init({
     date: {
       type: DataTypes.DATEONLY,
