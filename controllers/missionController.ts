@@ -176,11 +176,21 @@ export default class MissionController {
 
         const missions = missionModel.findAll({
             attributes: [
-                'id', 'startHour', 'endHour', 'startDate',  'validated', 'idClient', 'idEmployee', 'idCarer', 'idRecurence'
+                'id', 'startHour', 'endHour', 'startDate', 'streetNumber', 'streetName', 'postCode', 'city', 'validated', 'idClient', 'idEmployee', 'idCarer', 'idRecurence'
             ],
             where: { 
                 ["id"+role]: userId
-            }
+            },
+            include:[
+                {
+                    association:'client',
+                    attributes:['first_name','last_name','street_number','street_name','post_code','city']
+                },
+                {
+                    association:'carer',
+                    attributes:['first_name','last_name','street_number','street_name','post_code','city']
+                }
+            ]
         })
         .catch((err: Error) => {
             console.log(err)
