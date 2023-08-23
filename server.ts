@@ -10,6 +10,10 @@ import EmployeeController from './controllers/employeeController';
 import CarerController from './controllers/carerController'
 import AppointmentController from './controllers/appointmentController';
 import MissionController from './controllers/missionController';
+const db = require('./models/index')
+const sequelize = db.default.sequelize
+import boom from '@hapi/boom'
+
 
 const init = async () => {
 
@@ -27,6 +31,13 @@ const init = async () => {
     await server.register(Jwt);
     server.auth.strategy('jwt_strategy', 'jwt', jwtParams)
     //server.auth.default('jwt_strategy'); //marre de cette oppression
+
+
+    server.ext('onRequest', async (r: Request, h :ResponseToolkit) => {
+        try {await sequelize.authenticate()}
+        catch {return boom.serverUnavailable('Le serveur de bdd ne répond pas')}
+        return h.continue
+    })
 
 
     //TEST
@@ -170,6 +181,11 @@ const init = async () => {
             method: 'GET',
             path: '/carers/{id}',
             handler: CarerController.getCarerById
+        },
+        {
+            method: 'GET',
+            path: '/carers',
+            handler: CarerController.getAllCarers
         },
         {
             method: 'GET',

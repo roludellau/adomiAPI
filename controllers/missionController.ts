@@ -178,7 +178,7 @@ export default class MissionController {
             attributes: [
                 'id', 'startHour', 'endHour', 'startDate', 'streetNumber', 'streetName', 'postCode', 'city', 'validated', 'idClient', 'idEmployee', 'idCarer', 'idRecurence'
             ],
-            where: { 
+            where: {
                 ["id"+role]: userId
             },
             include:[

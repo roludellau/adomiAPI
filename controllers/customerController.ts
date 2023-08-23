@@ -21,7 +21,7 @@ export default class CustomerController {
         catch {return boom.serverUnavailable('Le serveur de bdd ne répond pas')}
 
         try{
-          const customers = await userModel.findAll({attributes: ['first_name'], where:{id_role: 2}})
+          const customers = await userModel.findAll({attributes: ['first_name'], where:{id_role: 1}})
             return customers;
         }
         catch(err){
@@ -133,7 +133,11 @@ export default class CustomerController {
 
 
     static createCustomer = async (request: Request, h: ResponseToolkit) => {
-        let info = request.query
+        if (typeof request.payload !== 'object'){
+            return boom.badData('Le corps de la requête doit être un objet JSON')
+        }
+
+        let info = request.payload as any
 
         const regex = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&µ£\/\\~|\-])[\wÀ-ÖØ-öø-ÿ@$!%*#?&µ£~|\-]{8,255}$/)
         if (!info.password) return boom.badData('Le champs password n\'a pas été fourni')
