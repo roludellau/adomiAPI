@@ -4,7 +4,7 @@ const db = require('../models/index')
 import argon2 from 'argon2';
 import boom from '@hapi/boom'
 import { Error, ValidationError, ValidationErrorItem } from 'sequelize' 
-const Sequelize = require('Sequelize')
+const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 
 import { UserAttributes } from '../models/user'
