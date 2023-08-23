@@ -12,7 +12,6 @@ const customerModel = db.default.customer
 export default class MissionController {
 
 
-
     static createMission = async (request: Request, h: ResponseToolkit)=>{
         if (typeof request.payload !== 'object'){
             return boom.badData('Le corps de la requête doit être un objet JSON')
@@ -50,10 +49,11 @@ export default class MissionController {
     }
 
 
-    static getAllMissions = async (request: Request, h: ResponseToolkit) => {
-        const t = await sequelize.transaction()
-        try {
+    static getAllMissions = async (r: Request, h: ResponseToolkit) => {
+        const filter = r.query.filter as string
+        const value = r.query.value as string
 
+        try {
             let missions = await missionModel.findAll({
                 attributes: ['startdate','startHour', 'endHour', 'streetName', 'streetNumber', 'postCode','city', 'validated', 'idClient', 'idEmployee'], 
                 include: [
@@ -62,14 +62,17 @@ export default class MissionController {
                         attributes: [ 'street_name', 'street_number', 'post_code','city' ]
                     }
                 ],
-                where: true ? {validated: false} : {}
+                where: {[filter]: [value]}
             })
+            if (missions.length == 0){
+                return h.response({message: "Aucune mission trouvée, vérifiez peut-être la validité des params \"filter\" et \"value\". (e.g Indiquez 1 pour true)"})
+                       .code(204)
+            }   
             return missions
-        } 
+        }
         catch (err) {
-            await t.rollback()
             console.log(err)
-            throw err
+            return boom.notImplemented("Une erreur serveur est survenue, il se pourrait que la valeur \"filter\" que vous avez indiquée soit invalide.")
         }
     }
 

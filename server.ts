@@ -97,6 +97,11 @@ const init = async () => {
             method:'PATCH',
             path:'/employees/{id}',
             handler:EmployeeController.updateEmployee
+        },
+        {
+            method:'GET',
+            path:'/general-requests',
+            handler:EmployeeController.getGeneralRequests
         }
     ])
 
