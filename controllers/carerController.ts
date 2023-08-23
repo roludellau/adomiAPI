@@ -14,6 +14,17 @@ const Mission = db.default.Mission
 const Appointment = db.default.Appointment
 
 export default class CarerController {
+   
+    static getAllCarers = async () => {
+        try {
+            const customers = await User.findAll({attributes: ['first_name', 'last_name', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city'], where: {id_role: 3}})
+            return customers;
+        }
+        catch(err){
+            console.log(err);
+            throw boom.badImplementation()
+        }
+    }
 
    static createCarer = async (req: Request, h: ResponseToolkit) => {
         if (await User.findOne({where:{last_name: req.query.last_name, first_name: req.query.first_name}})){
@@ -184,7 +195,6 @@ export default class CarerController {
 
 
     static getCarerCustomers = async (req: Request, h: ResponseToolkit) => {
-        
         return await Mission.findAll({attributes:['idClient'], 
             where:{idCarer: req.params.id},
             include:{
@@ -345,7 +355,7 @@ export default class CarerController {
 
             for (const queryChunk of splitQuery) {
                 const results = await User.findAll({
-                    attributes: ['first_name', 'last_name', 'email', 'user_name', 'phone', 'street_name', 
+                    attributes: ['id', 'first_name', 'last_name', 'email', 'user_name', 'phone', 'street_name', 
                                  'street_number', 'post_code', 'city', 'id_agency'], 
                     where:{
                         id_role: 3,

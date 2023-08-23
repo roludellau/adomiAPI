@@ -4,7 +4,7 @@ const db = require('../models/index')
 import argon2 from 'argon2';
 import boom from '@hapi/boom'
 import { Error, ValidationError, ValidationErrorItem } from 'sequelize' 
-const Sequelize = require('Sequelize')
+const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 
 import { UserAttributes } from '../models/user'
@@ -14,14 +14,14 @@ const agencyModel = db.default.Agency
 const missionModel = db.default.Mission
 const appointmentModel = db.default.Appointment
 
-export default class CustomerController{
+export default class CustomerController {
 
     static getAllCustomers = async () => {
         try {await sequelize.authenticate()}
         catch {return boom.serverUnavailable('Le serveur de bdd ne répond pas')}
 
         try{
-          const customers = await userModel.findAll({attributes: ['first_name'], where:{id_role: 2}})
+          const customers = await userModel.findAll({attributes: ['first_name'], where:{id_role: 1}})
             return customers;
         }
         catch(err){
@@ -41,6 +41,8 @@ export default class CustomerController{
             throw boom.badRequest('Vous devez indiquer le numéro de page en query (+ que 0)')
         }
 
+        console.log("page =", page)
+
         let splitQuery: string[] = (query as string).split(" ")
         // Inverting first and second words to get results based on lastname first
         const [two, one] = [splitQuery[1], splitQuery[0]]
@@ -58,7 +60,7 @@ export default class CustomerController{
 
             for (const queryChunk of splitQuery) {
                 const results = await userModel.findAll({
-                    attributes: ['first_name', 'last_name', 'email', 'user_name', 'phone', 'street_name', 
+                    attributes: ['id', 'first_name', 'last_name', 'email', 'user_name', 'phone', 'street_name', 
                                  'street_number', 'post_code', 'city', 'id_agency'], 
                     where:{
                         id_role: 1,
@@ -131,7 +133,11 @@ export default class CustomerController{
 
 
     static createCustomer = async (request: Request, h: ResponseToolkit) => {
-        let info = request.query
+        if (typeof request.payload !== 'object'){
+            return boom.badData('Le corps de la requête doit être un objet JSON')
+        }
+
+        let info = request.payload as any
 
         const regex = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&µ£\/\\~|\-])[\wÀ-ÖØ-öø-ÿ@$!%*#?&µ£~|\-]{8,255}$/)
         if (!info.password) return boom.badData('Le champs password n\'a pas été fourni')
