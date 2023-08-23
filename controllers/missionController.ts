@@ -54,15 +54,16 @@ export default class MissionController {
         const t = await sequelize.transaction()
         try {
 
-
-            let missions = await missionModel.findAll(
-            {attributes: ['startdate','startHour', 'endHour', 'streetName', 'streetNumber', 'postCode','city', 'validated', 'idClient', 'idEmployee'], 
-            include: [
-                {association:
-                    'client', 
-                    attributes: [
-                        'street_name', 'street_number', 'post_code','city']}]
-        })
+            let missions = await missionModel.findAll({
+                attributes: ['startdate','startHour', 'endHour', 'streetName', 'streetNumber', 'postCode','city', 'validated', 'idClient', 'idEmployee'], 
+                include: [
+                    {
+                        association: 'client', 
+                        attributes: [ 'street_name', 'street_number', 'post_code','city' ]
+                    }
+                ],
+                where: true ? {validated: false} : {}
+            })
             return missions
         } 
         catch (err) {
