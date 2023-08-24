@@ -76,15 +76,23 @@ export default class MissionController {
 
             let mission = await missionModel.findOne(
             {attributes: [
-                'startdate','startHour', 'endHour', 'streetName', 'streetNumber', 'postCode','city', 'validated', 'idClient', 'idEmployee'],
+                'startdate','startHour', 'endHour', 'streetName', 'streetNumber', 'postCode','city', 'validated', 'idClient', 'idEmployee','idCarer'],
             where:{
                 id: idMission
             }, 
             include: [
-                {association:
-                'client', 
-                attributes: [
-                    'street_name', 'street_number', 'post_code','city']}]
+                {
+                    association:'client', 
+                    attributes: [ 'first_name','last_name','phone','email','street_name', 'street_number', 'post_code','city' ]
+                },{
+                    association:'carer',
+                    attributes: [ 'first_name','last_name','phone','email','street_name', 'street_number', 'post_code','city' ]
+                },{
+                    association: 'recurence',
+                    attributes: ['id']
+                }
+            
+            ]
         })
             return mission
         } 
