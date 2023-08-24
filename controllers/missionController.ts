@@ -67,14 +67,22 @@ export default class MissionController {
 
         try {
             let missions = await missionModel.findAll({
-                attributes: ['startdate','startHour', 'endHour', 'streetName', 'streetNumber', 'postCode','city', 'validated', 'idClient', 'idEmployee'], 
+                attributes: ['startdate', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode','city', 'validated', 'idClient', 'idEmployee'], 
                 include: [
                     {
                         association: 'client', 
+                        attributes: [ 'first_name', 'last_name', 'user_name', 'street_name', 'street_number', 'post_code' ,'city' ]
+                    },
+                    {
+                        association: 'client', 
                         attributes: [ 'street_name', 'street_number', 'post_code','city' ]
+                    },
+                    {
+                        association: 'recurence', 
+                        attributes: [ 'recurence_type']
                     }
                 ],
-                where: {[filter]: [value]}
+                where: filter && value ? {[filter]: [value]} : {}
             })
             if (missions.length == 0){
                 return h.response({message: "Aucune mission trouvée, vérifiez peut-être la validité des params \"filter\" et \"value\". (e.g Indiquez 1 pour true)"})
@@ -102,10 +110,14 @@ export default class MissionController {
                 id: idMission
             }, 
             include: [
-                {association:
+                {
+                    association:
                 'client', 
                 attributes: [
-                    'street_name', 'street_number', 'post_code','city']}]
+                    'street_name', 'street_number', 'post_code','city'
+                ]
+                }
+        ]
         })
             return mission
         } 

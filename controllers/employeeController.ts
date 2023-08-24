@@ -175,12 +175,30 @@ export default class EmployeeController {
 
 
     static async getGeneralRequests(r: Request, h: ResponseToolkit ){
+        const filter = r.query.filter as string
+        const value = r.query.value as string
+
         try {
             const requests = await GeneralRequests.findAll({
-                attributes: ['id', 'request_string', 'user_id', 'done', 'created_at'],
-                where: { done: false }
+                attributes: ['id', 'request_string', 'user_id', 'referrer_id', 'done', 'created_at'],
+                where: filter && value ? {[filter]: [value]} : {},
+                include: [
+                    {
+                        association: 'user', 
+                        attributes: [
+                            'first_name', 'last_name'
+                        ]
+                    },
+                    {
+                        association: 'referrer', 
+                        attributes: [
+                            'first_name', 'last_name'
+                        ]
+                    }
+                ]
+        
             })  
-            return requests  
+            return requests
         }
         catch (err) {
             console.log(err)
