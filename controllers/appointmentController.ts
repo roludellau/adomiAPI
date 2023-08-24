@@ -9,7 +9,7 @@ const customerModel = db.default.User
 const missionModel = db.default.Mission
 const appointmentsModel = db.default.Appointment
 
-export default class AppointmentController{
+export default class AppointmentController {
 
 
     static getAppointments = async(request: Request, h: ResponseToolkit) => {

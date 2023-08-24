@@ -10,7 +10,6 @@ const userModel = db.default.User
 
 export default class UserController {
 
-
     static getAllUsers = async (request: Request, h: ResponseToolkit) => {
         const t = await sequelize.transaction()
         try {
@@ -115,5 +114,6 @@ export default class UserController {
             throw err
         }
     }
+
 }
 

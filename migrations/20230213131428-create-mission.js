@@ -54,7 +54,7 @@ module.exports = {
         }
       },
       idCarer:{
-        allowNull:false,
+        allowNull: true,
         type:Sequelize.INTEGER,
         references:{
           model:{
@@ -64,13 +64,13 @@ module.exports = {
         }
       },
       idRecurence:{
-        allowNull:false,
-        type:Sequelize.INTEGER,
+        allowNull: false,
+        type: Sequelize.INTEGER,
         references:{
-          model:{
-            tableName:'recurences'
-          },
-          key:'id'
+            model:{
+              tableName:'recurences'
+            },
+            key:'id'
         }
       }
       
