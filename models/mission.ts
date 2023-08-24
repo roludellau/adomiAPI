@@ -58,44 +58,44 @@ module.exports = (sequelize: any, DataTypes: { INTEGER: any; DATE: any; TIME: an
       }
     },
 
-    // startHour: {
+    startHour: {
 
-    //   type: DataTypes.TIME,
-    //   allowNull: false,
-    //   validate:{
+      type: DataTypes.TIME,
+      allowNull: false,
+      // validate:{
 
-    //     isNumeric: true,
-    //     notNull: {
-    //       msg: "Veuillez inidquer l'heure de début"
-    //     }
-    //   }
-    // }, 
+      //   isNumeric: true,
+      //   notNull: {
+      //     msg: "Veuillez inidquer l'heure de début"
+      //   }
+      // }
+    }, 
     
-    // endHour: {
-    //   type: DataTypes.TIME,
-    //   allowNull: false,
+    endHour: {
+      type: DataTypes.TIME,
+      allowNull: false,
 
-    //   validate:{
-    //     isNumeric: true,
-    //     notNull: {
-    //       msg: "Veuillez inidquer l'heure de fin"
-    //     }
-    //   }
-    // },
+      // validate:{
+      //   isNumeric: true,
+      //   notNull: {
+      //     msg: "Veuillez inidquer l'heure de fin"
+      //   }
+      // }
+    },
 
     streetName: {
 
       type: DataTypes.STRING,
       allowNull: false,
 
-      validate:{
-        isAlpha:{
-          msg: "Veuillez indiquer un nom de rue valide"
-        },
-        notNull: {
-          msg: "Veuillez renseigner un nom de rue"
-        },
-      }
+      // validate:{
+      //   isAlpha:{
+      //     msg: "Veuillez indiquer un nom de rue valide"
+      //   },
+      //   notNull: {
+      //     msg: "Veuillez renseigner un nom de rue"
+      //   },
+      // }
     },
     streetNumber:{
 

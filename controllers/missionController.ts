@@ -3,6 +3,7 @@ import Jwt from '@hapi/jwt';
 import argon2 from 'argon2';
 import boom from '@hapi/boom'
 import * as fs from 'fs/promises';
+import { exit } from "process";
 const db = require('../models/index')
 const sequelize = db.default.sequelize
 const missionModel = db.default.Mission
@@ -14,13 +15,8 @@ export default class MissionController {
 
 
     static createMission = async (request: Request, h: ResponseToolkit)=>{
-        if (typeof request.payload !== 'object'){
-            return boom.badData('Le corps de la requête doit être un objet JSON')
-        }
-
         const t = await sequelize.transaction();
         const formData = request.payload as any
-        console.log(formData)
         try{
 
             const create =  await missionModel.create({
@@ -38,6 +34,22 @@ export default class MissionController {
                 idRecurence: formData.idRecurence
     
             });
+
+            // const create =  await missionModel.create({
+            //     startDate: request.query.startDate,
+            //     startHour: request.query.startHour,
+            //     endHour: request.query.endHour,
+            //     streetName: request.query.streetName,
+            //     streetNumber: request.query.streetNumber,
+            //     postCode: request.query.postCode,
+            //     city: request.query.city,
+            //     validated: request.query.validated,
+            //     idClient: request.query.idClient,
+            //     idEmployee: request.query.idEmployee,
+            //     idCarer: request.query.idCarer,
+            //     idRecurence: request.query.idRecurence
+    
+            // });
 
             return create
 
