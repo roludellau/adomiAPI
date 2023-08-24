@@ -14,7 +14,17 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.STRING(255)
             },
-            user_id:{
+            user_id: {
+                allowNull:true,
+                type:Sequelize.INTEGER,
+                references: {
+                    model: {
+                        tableName:'users'
+                    },
+                    key:'id'
+                }
+            },
+            referrer_id: {
                 allowNull:true,
                 type:Sequelize.INTEGER,
                 references: {

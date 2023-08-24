@@ -33,7 +33,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
             user_id: DataTypes.INTEGER,
             done: DataTypes.BOOLEAN,
             created_at: DataTypes.DATE,
-        }, 
+        },
         {
             sequelize,
             modelName: 'GeneralRequests',
