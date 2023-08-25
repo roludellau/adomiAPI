@@ -102,7 +102,13 @@ const init = async () => {
             method:'GET',
             path:'/general-requests',
             handler:EmployeeController.getGeneralRequests
+        }, 
+        {
+            method: 'GET',
+            path: '/general-requests/{id}',
+            handler: EmployeeController.getOneGeneralRequest
         }
+
     ])
 
 
