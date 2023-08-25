@@ -207,4 +207,39 @@ export default class EmployeeController {
     }
 
 
+    static async getOneGeneralRequest(r: Request, h: ResponseToolkit ){
+        const idString = r.params.id as string
+        const id = parseInt(idString)
+        if (isNaN(id)){
+            return boom.badData("Veuillez fournir un entier numérique positif comme id. e.g. /general-requests/404")
+        }
+
+        try {
+            const request = await GeneralRequests.findByPk(id, {
+                attributes: ['id', 'request_string', 'user_id', 'referrer_id', 'done', 'created_at'],
+                include: [
+                    {
+                        association: 'user', 
+                        attributes: [
+                            'id', 'first_name', 'last_name', 'email', 'user_name',
+                        ]
+                    },
+                    {
+                        association: 'referrer', 
+                        attributes: [
+                            'id', 'first_name', 'last_name'
+                        ]
+                    }
+                ]
+            })  
+            return request
+        }
+        catch (err) {
+            console.log(err)
+            return boom.boomify(err as Error)
+        }
+    }
+
+
+
 }

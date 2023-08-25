@@ -67,7 +67,7 @@ export default class MissionController {
 
         try {
             let missions = await missionModel.findAll({
-                attributes: ['startdate', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode','city', 'validated', 'idClient', 'idEmployee'], 
+                attributes: ['id', 'startdate', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode','city', 'validated', 'idClient', 'idEmployee'], 
                 include: [
                     {
                         association: 'client', 
