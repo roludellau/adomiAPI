@@ -17,7 +17,7 @@ export default class CarerController {
    
     static getAllCarers = async () => {
         try {
-            const customers = await User.findAll({attributes: ['first_name', 'last_name', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city'], where: {id_role: 3}})
+            const customers = await User.findAll({attributes: ['id','first_name', 'last_name', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city'], where: {id_role: 3}})
             return customers;
         }
         catch(err){
