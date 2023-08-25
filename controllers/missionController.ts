@@ -164,24 +164,26 @@ export default class MissionController {
     static updateMission = async(request:Request, h: ResponseToolkit) => {
         const t = await sequelize.transaction()
         const id = request.params.id
-        const input = request.query
+        const formData = request.payload as any
+        console.log(" Passe dans updateMission ---------------")
+        console.log(formData)
         try{
             const mission = missionModel.findOne({where:{id:id}})
 
             if(mission){
                 missionModel.update({
-                    startDate: request.query.startDate,
-                    startHour: request.query.startHour,
-                    endHour: request.query.endHour,
-                    streetName: request.query.streetName,
-                    streetNumber: request.query.streetNumber,
-                    postCode: request.query.postCode,
-                    city: request.query.city,
-                    validated: request.query.validated,
-                    idClient: request.query.idClient,
-                    idEmployee: request.query.idEmployee,
-                    idCarer: request.query.idCarer,
-                    idRecurence: request.query.idRecurence
+                    startDate: formData.startDate,
+                    startHour: formData.startHour,
+                    endHour: formData.endHour,
+                    streetName: formData.streetName,
+                    streetNumber: formData.streetNumber,
+                    postCode: formData.postCode,
+                    city: formData.city,
+                    validated: formData.validated,
+                    idClient: formData.idClient,
+                    idEmployee: formData.idEmployee,
+                    idCarer: formData.idCarer,
+                    idRecurence: formData.idRecurence
                 },
                 {
                     where:{
