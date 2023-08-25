@@ -62,8 +62,12 @@ export default class MissionController {
                         attributes: [ 'first_name', 'last_name', 'user_name', 'street_name', 'street_number', 'post_code' ,'city' ]
                     },
                     {
-                        association: 'client', 
-                        attributes: [ 'street_name', 'street_number', 'post_code','city' ]
+                        association: 'carer', 
+                        attributes: [ 'first_name', 'last_name', 'user_name' ]
+                    },
+                    {
+                        association: 'employee', 
+                        attributes: [ 'first_name', 'last_name', 'user_name' ]
                     },
                     {
                         association: 'recurence', 

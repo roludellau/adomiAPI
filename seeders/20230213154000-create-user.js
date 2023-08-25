@@ -71,7 +71,7 @@ module.exports = {
         id_agency: '1'
       },
       {
-        first_name: 'Omer ',
+        first_name: 'Omer',
         last_name: 'Dhalorr',
         email: 'omsd@outlook.com',
         //Mdp1234*
@@ -127,7 +127,7 @@ module.exports = {
         user_name:'sandra.monlimegrat',
         phone:'0673435052',
         street_name:'rue creuse',
-        street_number: '10 bis',
+        street_number: '10',
         post_code: '78610',
         city:'Auffargis',
         id_role: '3',
