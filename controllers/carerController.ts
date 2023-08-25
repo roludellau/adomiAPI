@@ -3,6 +3,7 @@ import argon2 from 'argon2';
 import boom from '@hapi/boom'
 import { UserAttributes } from '../models/user'
 import Sequelize, { Error } from "sequelize";
+import moment from "moment";
 const Op = Sequelize.Op
 
 const db = require('../models/index')
@@ -209,8 +210,47 @@ export default class CarerController {
         //Finir: éviter de récupérer plusieurs fois le même client
     }
 
+    static getLatestAppointments = async (req: Request, h: ResponseToolkit) => {
 
+        const date = new Date();
 
+        let dd = date.getDate();
+        let dd2 = dd+1;
+        let mm = date.getMonth()+1;
+        let yy = date.getFullYear();
+
+        const day = (dd<10)? "0" + dd : dd;
+        const day2 = (dd2<10)? "0" + dd2 : dd2;
+        const month = (mm<10)? "0" + mm : mm;
+        
+        const today = moment(yy + "-" + month + "-" + day, "YYYY-MM-DD").format("YYYY-MM-DD");
+        console.log(today)
+        const tomorrow = moment(yy + "-" + month + "-" + day2, "YYYY-MM-DD").format("YYYY-MM-DD");
+
+        return await Appointment.findAll(
+            {
+                attributes: ['id', 'idMission', 'date', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode', 'city'],
+                where: [
+                    {idCarer: req.params.id},
+                    {date: [today, tomorrow]}
+                ],
+                include: {
+                    association: 'mission',
+                    attributes: ['idClient', 'idRecurence'],
+                    include:{
+                        association:'client',
+                        attributes: ['first_name', 'last_name'],
+                    }
+                },
+                order: [
+                        ['date', 'ASC'],
+                        ['startHour', 'ASC']
+                ],
+                limit: 2
+            }
+        ).then((res: typeof Appointment[]) => res)
+         .catch((err: Error) => { console.log(err); return err })
+    }
 
     static getAppointments = async (req: Request, h: ResponseToolkit) => {
         const appointments:any[] = await Appointment.findAll(
@@ -219,8 +259,16 @@ export default class CarerController {
                 where: {idCarer: req.params.id},
                 include: {
                     association: 'mission',
-                    attributes: ['idClient', 'idRecurence']
-                }
+                    attributes: ['idClient', 'idRecurence'],
+                    include:{
+                        association:'client',
+                        attributes: ['first_name', 'last_name'],
+                    }
+                },
+                order: [
+                    ['date', 'DESC'],
+                    ['startHour', 'ASC']
+                ]
             }
         ).then((res: typeof Appointment[]) => res)
          .catch((err: Error) => { console.log(err); return err })

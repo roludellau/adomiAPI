@@ -155,8 +155,6 @@ module.exports = (sequelize: any, DataTypes:any ) => {
           args: [/^0[0-9].*$/],
           msg: "Le numéro de téléphone doit commencer par 0"
         },
-
-
         // validPhone(value: any){
 
         //   let regExp = /^0[0-9].*$/

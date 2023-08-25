@@ -10,7 +10,6 @@ const userModel = db.default.User
 
 export default class UserController {
 
-
     static getAllUsers = async (request: Request, h: ResponseToolkit) => {
         const t = await sequelize.transaction()
         try {
@@ -95,7 +94,18 @@ export default class UserController {
 
         try {
             return await userModel.findOne({
-                attributes: ['id', 'first_name', 'last_name', 'user_name', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city'],
+                attributes: ['id', 'first_name', 'last_name', 'user_name', 'email', 'phone', 'street_name', 'street_number', 'post_code', 'city', 'id_role', 'id_agency'],
+                include: [
+                    {
+                        association: 'role',
+                        attributes:['label'],
+                        where:{label:'employee'}
+                    },
+                    {
+                        association:'agency',
+                        attributes:['name','adress']
+                    },
+                ],
                 where: { id: id }
             })
         }
@@ -104,5 +114,6 @@ export default class UserController {
             throw err
         }
     }
+
 }
 
