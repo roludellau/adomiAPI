@@ -13,6 +13,7 @@ import MissionController from './controllers/missionController';
 const db = require('./models/index')
 const sequelize = db.default.sequelize
 import boom from '@hapi/boom'
+import UserRolesController from './controllers/userRolesController';
 
 
 const init = async () => {
@@ -102,7 +103,13 @@ const init = async () => {
             method:'GET',
             path:'/general-requests',
             handler:EmployeeController.getGeneralRequests
+        }, 
+        {
+            method: 'GET',
+            path: '/general-requests/{id}',
+            handler: EmployeeController.getOneGeneralRequest
         }
+
     ])
 
 
@@ -111,6 +118,13 @@ const init = async () => {
         method:'GET',
         path:'/agencies',
         handler: AgencyController.getAllAgencies
+    })
+
+    //ROLES
+    server.route({
+        method:'GET',
+        path:'/roles',
+        handler: UserRolesController.getAllRoles
     })
     
     

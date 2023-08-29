@@ -68,7 +68,7 @@ export default class MissionController {
 
         try {
             let missions = await missionModel.findAll({
-                attributes: ['startdate', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode','city', 'validated', 'idClient', 'idEmployee'], 
+                attributes: ['id', 'startdate', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode','city', 'validated', 'idClient', 'idEmployee'], 
                 include: [
                     {
                         association: 'client', 
@@ -165,7 +165,9 @@ export default class MissionController {
     static updateMission = async(request:Request, h: ResponseToolkit) => {
         const t = await sequelize.transaction()
         const id = request.params.id
-        const input = request.query
+        const formData = request.payload as any
+        console.log(" Passe dans updateMission ---------------")
+        console.log(formData)
         try{
             const mission = missionModel.findOne({where:{id:id}})
 
