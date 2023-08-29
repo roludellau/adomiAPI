@@ -2,6 +2,7 @@ import { Request, ResponseObject, ResponseToolkit } from "hapi";
 
 const db = require('../models/index')
 import argon2 from 'argon2';
+import validator from "validator";
 const sequelize = db.default.sequelize
 const userModel = db.default.User
 const agencyModel = db.default.Agency
@@ -76,10 +77,10 @@ export default class AppointmentController {
                 date: input.startDate,
                 startHour: input.startHour,
                 endHour: input.endHour,
-                streetName: input.streetName,
+                streetName: validator.escape(input.streetName as string),
                 streetNumber: input.streetNumber,
                 postCode: input.postCode,
-                city: input.city,
+                city: validator.escape(input.city as string),
                 idCarer: input.idCarer,
                 idMission: input.idMission
             })
@@ -105,10 +106,10 @@ export default class AppointmentController {
                 date: input.startDate,
                 startHour: input.startHour,
                 endHour: input.endHour,
-                streetName: input.streetName,
+                streetName: validator.escape(input.streetName as string),
                 streetNumber: input.streetNumber,
                 postCode: input.postCode,
-                city: input.city,
+                city: validator.escape(input.city as string),
                 idCarer: input.idCarer,
                 idMission: input.idMission
             })

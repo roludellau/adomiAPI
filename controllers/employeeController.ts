@@ -4,6 +4,7 @@ import argon2 from 'argon2';
 import * as fs from 'fs/promises';
 import boom from '@hapi/boom'
 import { request } from "http";
+import validator from "validator";
 const db = require('../models/index')
 const sequelize = db.default.sequelize
 const userModel = db.default.User
@@ -94,16 +95,16 @@ export default class EmployeeController {
         
         try {
             const employee = await userModel.create({
-                first_name: input.first_name,
-                last_name: input.last_name,
+                first_name: validator.escape(input.first_name as string),
+                last_name: validator.escape(input.last_name as string),
                 email: input.email,
                 password: userpassword,
-                user_name: input.username,
+                user_name: validator.escape(input.username as string),
                 phone: input.phone,
-                street_name: input.streetname,
+                street_name: validator.escape(input.streetname as string),
                 street_number: input.streetnumber,
                 post_code: input.postcode,
-                city: input.city,
+                city: validator.escape(input.city as string),
                 idRole: input.idrole,
                 idAgency: input.idagency,
             })
@@ -142,16 +143,16 @@ export default class EmployeeController {
 
             if(user){
                 userModel.update({
-                    first_name: input.first_name,
-                    last_name: input.last_name,
+                    first_name: validator.escape(input.first_name as string),
+                    last_name: validator.escape(input.last_name as string),
                     email: input.email,
                     password: input.password,
-                    user_name: input.username,
+                    user_name: validator.escape(input.username as string),
                     phone: input.phone,
-                    street_name: input.streetname,
+                    street_name: validator.escape(input.streetname as string),
                     street_number: input.streetnumber,
                     post_code: input.postcode,
-                    city: input.city,
+                    city: validator.escape(input.city as string),
                     idRole: input.idrole,
                     idAgency: input.idagency,
                 },
