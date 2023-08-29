@@ -4,6 +4,7 @@ const db = require('../models/index')
 import argon2 from 'argon2';
 import boom from '@hapi/boom'
 import { Error, ValidationError, ValidationErrorItem } from 'sequelize' 
+import validator from "validator";
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 
@@ -137,6 +138,8 @@ export default class CustomerController {
             return boom.badData('Le corps de la requête doit être un objet JSON')
         }
 
+        console.log("passe dans createCustomer")
+
         let info = request.payload as any
 
         const regex = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&µ£\/\\~|\-])[\wÀ-ÖØ-öø-ÿ@$!%*#?&µ£~|\-]{8,255}$/)
@@ -154,6 +157,14 @@ export default class CustomerController {
 
         try {
             info.password = await argon2.hash(info.password as string);
+            info.user_name = validator.escape(info.user_name as string)
+            info.first_name = validator.escape(info.first_name as string)
+            info.last_name = validator.escape(info.last_name as string)
+            info.street_name = validator.escape(info.street_name as string)
+            info.city = validator.escape(info.city as string)
+
+            console.log(info)
+
             info.id_role = '1';
             const createdUser = await userModel.create(info)
             delete createdUser.dataValues.password
@@ -183,15 +194,15 @@ export default class CustomerController {
             let customer = await userModel.findOne({attributes:['id','first_name', 'last_name', 'email', 'user_name', 'phone', 'street_name', 'street_number', 'post_code', 'city', 'idAgency'], where:{id: request.params.id}});
             if(customer){
                 const updatedCustomer = await customer.update({
-                    first_name: request.query.first_name,
-                    last_name: request.query.last_name,
+                    first_name: validator.escape(request.query.first_name as string),
+                    last_name: validator.escape(request.query.last_name as string),
                     email: request.query.email,
-                    user_name: request.query.user_name,
+                    user_name: validator.escape(request.query.user_name as string),
                     phone: request.query.phone,
-                    street_name: request.query.street_name,
+                    street_name: validator.escape(request.query.street_name as string),
                     street_number: request.query.street_number,
                     post_code: request.query.poste_code,
-                    city: request.query.city,
+                    city: validator.escape(request.query.city as string),
                     idAgency: request.query.idAgency
                 })
 

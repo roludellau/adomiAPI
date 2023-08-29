@@ -4,6 +4,7 @@ import argon2 from 'argon2';
 import boom from '@hapi/boom'
 import * as fs from 'fs/promises';
 import { exit } from "process";
+import validator from "validator";
 const db = require('../models/index')
 const sequelize = db.default.sequelize
 const missionModel = db.default.Mission
@@ -22,10 +23,10 @@ export default class MissionController {
                 startDate: formData.startDate,
                 startHour: formData.startHour,
                 endHour: formData.endHour,
-                streetName: formData.streetName,
+                streetName: validator.escape(formData.streetName),
                 streetNumber: formData.streetNumber,
                 postCode: formData.postCode,
-                city: formData.city,
+                city: validator.escape(formData.city),
                 validated: formData.validated,
                 idClient: formData.idClient,
                 idEmployee: formData.idEmployee,
@@ -173,10 +174,10 @@ export default class MissionController {
                     startDate: request.query.startDate,
                     startHour: request.query.startHour,
                     endHour: request.query.endHour,
-                    streetName: request.query.streetName,
+                    streetName: validator.escape(request.query.streetName as string),
                     streetNumber: request.query.streetNumber,
                     postCode: request.query.postCode,
-                    city: request.query.city,
+                    city: validator.escape(request.query.city as string),
                     validated: request.query.validated,
                     idClient: request.query.idClient,
                     idEmployee: request.query.idEmployee,

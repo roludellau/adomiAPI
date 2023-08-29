@@ -3,6 +3,7 @@ import argon2 from 'argon2';
 import boom from '@hapi/boom'
 import { UserAttributes } from '../models/user'
 import Sequelize, { Error } from "sequelize";
+import validator from "validator";
 import moment from "moment";
 const Op = Sequelize.Op
 
@@ -38,7 +39,12 @@ export default class CarerController {
 
         let payload: typeof User = {...req.query}
         payload.password = await argon2.hash(payload.password)
-        payload.idRole = '3' //toujours
+        payload.id_role = '3' //toujours
+        payload.user_name = validator.escape(payload.user_name as string)
+        payload.first_name = validator.escape(payload.first_name as string)
+        payload.last_name = validator.escape(payload.last_name as string)
+        payload.street_name = validator.escape(payload.street_name as string)
+        payload.city = validator.escape(payload.city as string)
 
         let newCarer = await User.create(payload)
             .then((res: UserAttributes) => { return { ...res, password: '' } }) //pourpakivoi
@@ -66,6 +72,12 @@ export default class CarerController {
             return boom.serverUnavailable('Allume ton WAMP, patate !')
         }
         const payload = req.query
+        payload.user_name = validator.escape(payload.user_name as string)
+        payload.first_name = validator.escape(payload.first_name as string)
+        payload.last_name = validator.escape(payload.last_name as string)
+        payload.street_name = validator.escape(payload.street_name as string)
+        payload.city = validator.escape(payload.city as string)
+        
         const response = await User.update(payload, {where: {id:req.params.id}})
               .then((rowsAffected:number) => rowsAffected)
               .catch(() => { 
