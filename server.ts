@@ -20,7 +20,7 @@ const init = async () => {
 
     const server = Hapi.server({
         port: 80,
-        host: 'adomi-api.onrender.com',
+        host: '0.0.0.0',
         routes: {
             cors: {
                 origin: ['*'],
