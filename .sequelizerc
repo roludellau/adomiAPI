@@ -1,0 +1,9 @@
+var path = require('path')
+const env = process.env.NODE_ENV
+
+module.exports = {
+  'config':          env == 'production' ? '/etc/secrets/config.json' : path.resolve('build', 'config', 'config.json'),
+  //'migrations-path': path.resolve('server', 'migrations'),
+  //'models-path':     path.resolve('server', 'models'),
+  //'seeders-path':    path.resolve('server', 'seeders'),
+}
