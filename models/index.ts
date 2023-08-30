@@ -12,6 +12,7 @@ if (fs.existsSync('/etc/secrets/config.json')){
   config = require('../config/config.json')['development'];
 }
 
+console.log(config)
 
 const db: any = {};
 
@@ -19,7 +20,8 @@ let sequelize: any;
 try {
   if (config.use_env_variable) {
     sequelize = new Sequelize(process.env[config.use_env_variable], config);
-  } else {
+  } 
+  else {
     sequelize = new Sequelize(config.database, config.username, config.password, config);
   }
 } catch (err){
