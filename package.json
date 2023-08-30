@@ -1,7 +1,7 @@
 {
     "name": "testsequelize",
     "version": "1.0.0",
-    "main": "index.js",
+    "main": "build/server.js",
     "scripts": {
         "dev:tsc": "tsc --watch -p .",
         "dev:serve": "nodemon -e js -w build build/server.js",
