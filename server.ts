@@ -61,13 +61,15 @@ const init = async () => {
         path:'/db-seed-all',
         options: {auth: false},
         handler: (request: Request, h :ResponseToolkit) => {
-            exec('npx sequelize db:seed:all', ({err, stdout, stderr}: any) => {
+            exec('npx sequelize db:seed:all', (err:any, stdout:any, stderr:any) => {
                 if (err) {
                   console.log(err)
+                  throw err
                 }
                 //console.log(`stdout: ${stdout}`);
                 //console.log(`stderr: ${stderr}`);
             })
+            return h.response().code(204)
         }
     })
     
