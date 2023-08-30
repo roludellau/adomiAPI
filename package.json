@@ -5,7 +5,8 @@
     "scripts": {
         "dev:build": "tsc --watch -p .",
         "dev:serve": "nodemon -e js -w build build/server.js",
-        "dev": "run-p dev:*"
+        "dev": "run-p dev:*",
+        "prod": "tsc -p . && node build/server.js"
     },
     "author": "",
     "license": "ISC",
