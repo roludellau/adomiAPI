@@ -14,6 +14,7 @@ const db = require('./models/index')
 const sequelize = db.default.sequelize
 import boom from '@hapi/boom'
 import UserRolesController from './controllers/userRolesController';
+const { exec } = require('child_process');
 
 
 const init = async () => {
@@ -47,12 +48,29 @@ const init = async () => {
     //TEST
     server.route({
         method: 'GET',
-        path:'/test',
+        path:'/',
         options: {auth: false},
         handler: (request: Request, h :ResponseToolkit) => {
-            return h.response('oui')
+            return h.response('Oï')
         }
     })
+
+    //SEED
+    server.route({
+        method: 'PUT',
+        path:'/db-seed-all',
+        options: {auth: false},
+        handler: (request: Request, h :ResponseToolkit) => {
+            exec('npx sequelize db:seed:all', ({err, stdout, stderr}: any) => {
+                if (err) {
+                  console.log(err)
+                }
+                //console.log(`stdout: ${stdout}`);
+                //console.log(`stderr: ${stderr}`);
+            })
+        }
+    })
+    
 
     //USERS
     server.route([
