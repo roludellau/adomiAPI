@@ -32,11 +32,6 @@ export default class CarerController {
             return boom.conflict('Un utilisateur de ce nom existe déjà')
         }
 
-        const t = await sequelize.transaction().then((t:PromiseFulfilledResult<any>) => t).catch(() => false)
-        if (t == false){
-            return boom.serverUnavailable('Allume ton WAMP, patate !')
-        }
-
         let payload: typeof User = {...req.query}
         payload.password = await argon2.hash(payload.password)
         payload.id_role = '3' //toujours
@@ -49,7 +44,6 @@ export default class CarerController {
         let newCarer = await User.create(payload)
             .then((res: UserAttributes) => { return { ...res, password: '' } }) //pourpakivoi
             .catch((err:Error) => {
-                t.rollback()
                 return boom.badData('Les données fournies sont probablement mal formatées.')
             })
         
@@ -67,10 +61,6 @@ export default class CarerController {
 
    
    static updateCarer = async (req: Request, h: ResponseToolkit) => {
-        const t = await sequelize.transaction().then((t:PromiseFulfilledResult<any>) => t).catch(() => false)
-        if (t == false){
-            return boom.serverUnavailable('Allume ton WAMP, patate !')
-        }
         const payload = req.query
         payload.user_name = validator.escape(payload.user_name as string)
         payload.first_name = validator.escape(payload.first_name as string)
@@ -81,7 +71,6 @@ export default class CarerController {
         const response = await User.update(payload, {where: {id:req.params.id}})
               .then((rowsAffected:number) => rowsAffected)
               .catch(() => { 
-                  t.rollback() 
                   return boom.badData('Les données fournies sont probablement mal formatées.')
               })
         return response
@@ -91,14 +80,9 @@ export default class CarerController {
 
 
    static deleteCarer = async (req: Request, h: ResponseToolkit) => {
-        const t = await sequelize.transaction().then((t:PromiseFulfilledResult<any>) => t).catch(() => false)
-        if (t == false){
-            return boom.serverUnavailable('Allume ton WAMP, patate !')
-        }
         const response = await User.destroy({where: {id: req.params.id}})
                             .then((rowsAffected:number) => rowsAffected)
                             .catch((err:Error) => { 
-                                t.rollback() 
                                 boom.boomify(err)
                             })
         return response
@@ -127,7 +111,7 @@ export default class CarerController {
                     },
                 }
             ).then((result:any[]) => result[0])
-             .catch(() => boom.serverUnavailable('Erreur à isLinked'))
+             .catch(() => boom.serverUnavailable('Erreur à "isLinked" dans "addAvailability"'))
             
         //Si l'auxiliaire est lié à cette dispo
             if (isLinked){
@@ -193,14 +177,12 @@ export default class CarerController {
    
 
     static deleteAvailability = async (req: Request, h: ResponseToolkit) => {
-        const t = await sequelize.transaction().then((t:any) => t).catch((err: Error) => boom.serverUnavailable('Allume ton WAMP, banane.'))
         return await Availability.destroy({
             where: {id: req.params.id}
         })
         .then((res: any) => { return {rowsAffected: res} })
         .catch((err: Error) => {
             console.log(err);
-            t.rollback()
             return boom.internal('Désolé, veuillez réessayer plus tard.')
         })
     }

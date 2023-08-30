@@ -36,7 +36,6 @@ export default class EmployeeController {
     }
 
     static getEmployeeById = async(request: Request, h:ResponseToolkit) => {
-        const t = await sequelize.transaction()
         const idEmployee = request.params.idEmployee
         try {
             const employee = await userModel.findOne({
@@ -58,14 +57,12 @@ export default class EmployeeController {
             return employee
         }
         catch (err) {
-            await t.rollback()
             console.log(err)
             throw err
         }
     }
 
     static getEmployeesFromAgencyId = async (request: Request, h: ResponseToolkit) => {
-        const t = await sequelize.transaction()
         const idAgency = request.params.idAgency
 
         try{
@@ -80,16 +77,14 @@ export default class EmployeeController {
         return employees
         }
         catch (err) {
-            await t.rollback()
             console.log(err)
             throw err
         }
     }
 
     static addEmployee = async(request: Request, h: ResponseToolkit) => {
-        const t = await sequelize.transaction()
         const input = request.query
-        console.log(input);
+        //console.log(input);
 
         const userpassword = await argon2.hash(request.query.password as string);
         
@@ -108,26 +103,22 @@ export default class EmployeeController {
                 idRole: input.idrole,
                 idAgency: input.idagency,
             })
-            console.log(employee);
             return employee
+            // console.log(employee)
         }
         catch (err) {
-            console.log(err
-                );
-            
+            console.log(err);
             throw err
         }
     }
 
     static deleteEmployee = async(request: Request, h:ResponseToolkit) => {
-        const t = await sequelize.transaction()
         const id = request.params.id
         try{
             const count = await userModel.destroy({where: {id: id}})
             return count
         }
         catch (err){
-            t.rollback()
             console.log(err);
             throw err
             
@@ -135,13 +126,11 @@ export default class EmployeeController {
     }
 
     static updateEmployee = async(request:Request, h: ResponseToolkit) => {
-        const t = await sequelize.transaction()
         const id = request.params.id
         const input = request.query
-        try{
+        try {
             const user = userModel.findOne({where:{id:id}})
-
-            if(user){
+            if (user) {
                 userModel.update({
                     first_name: validator.escape(input.first_name as string),
                     last_name: validator.escape(input.last_name as string),
@@ -167,10 +156,8 @@ export default class EmployeeController {
             return 0
         }
         catch (err){
-            t.rollback()
             console.log(err)
             throw err
-
         }
     }
 

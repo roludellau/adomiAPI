@@ -15,10 +15,9 @@ export default class MissionController {
 
 
     static createMission = async (request: Request, h: ResponseToolkit)=>{
-        const t = await sequelize.transaction();
         const formData = request.payload as any
-        try{
 
+        try {
             const create =  await missionModel.create({
                 startDate: formData.startDate,
                 startHour: formData.startHour,
@@ -32,7 +31,6 @@ export default class MissionController {
                 idEmployee: formData.idEmployee,
                 idCarer: formData.idCarer,
                 idRecurence: formData.idRecurence
-    
             });
 
             // const create =  await missionModel.create({
@@ -200,7 +198,6 @@ export default class MissionController {
             t.rollback()
             console.log(err)
             throw err
-
         }
         
     }

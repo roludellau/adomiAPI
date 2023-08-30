@@ -14,7 +14,6 @@ export default class AppointmentController {
 
 
     static getAppointments = async(request: Request, h: ResponseToolkit) => {
-        const t = await sequelize.transaction()
 
         try{
             const appointments = await appointmentsModel.findAll({ 
@@ -38,14 +37,12 @@ export default class AppointmentController {
             return appointments
         }
         catch (err){
-            t.rollback()
             console.log(err)
             throw err
         }
     }
 
     static getAppointment = async(request: Request, h: ResponseToolkit) => {
-        // const t = await sequelize.transaction()
         const id = request.params.id
 
         try{
@@ -63,14 +60,12 @@ export default class AppointmentController {
             return appointments
         }
         catch (err){
-            // t.rollback()
             console.log(err)
             throw err
         }
     }
 
     static addAppointment = async(request: Request, h: ResponseToolkit) => {
-        const t = await sequelize.transaction()
         const input = request.query
         try{
             const appointment = await appointmentsModel.create({
@@ -88,14 +83,12 @@ export default class AppointmentController {
             return appointment
         }
         catch(err){
-            t.rollback()
             console.log(err)
             throw err
         }
     }
 
     static updateAppointment = async(request: Request, h: ResponseToolkit) => {
-        const t = await sequelize.transaction()
         const id = request.params.id
         const input = request.query
 
@@ -116,7 +109,6 @@ export default class AppointmentController {
             return updatedAppointment
         }
         catch(err){
-            t.rollback()
             console.log(err)
             throw err
             
@@ -124,7 +116,6 @@ export default class AppointmentController {
     }
 
     static deleteAppointment = async(request: Request, h: ResponseToolkit) =>{
-        const t = await sequelize.transaction()
         const id = request.params.id
 
         try{
@@ -132,7 +123,6 @@ export default class AppointmentController {
             return count
         }
         catch(err){
-            t.rollback()
             console.log(err)
             throw err
             

@@ -36,7 +36,7 @@ const init = async () => {
 
 
     server.ext('onRequest', async (r: Request, h :ResponseToolkit) => {
-        try {await sequelize.authenticate()}
+        try { await sequelize.authenticate() }
         catch (err) {
             console.log("err at db ping : ", err)
             return boom.serverUnavailable('Le serveur de bdd ne répond pas')
@@ -55,23 +55,6 @@ const init = async () => {
         }
     })
 
-    //SEED
-    server.route({
-        method: 'PUT',
-        path:'/db-seed-all',
-        options: {auth: false},
-        handler: (request: Request, h :ResponseToolkit) => {
-            exec('npx sequelize db:seed:all', (err:any, stdout:any, stderr:any) => {
-                if (err) {
-                  console.log(err)
-                  throw err
-                }
-                //console.log(`stdout: ${stdout}`);
-                //console.log(`stderr: ${stderr}`);
-            })
-            return h.response().code(204)
-        }
-    })
     
 
     //USERS
@@ -328,6 +311,25 @@ const init = async () => {
             handler: MissionController.getMissionsByUser
         },
     ])
+
+    // SEED (attention, ne pas seeder à moins d'être en pleine re-init du serveur)
+    server.route({
+        method: 'PUT',
+        path:'/db-seed-all',
+        options: {auth: false},
+        handler: (request: Request, h :ResponseToolkit) => {
+            exec('npx sequelize db:seed:all', (err:any, stdout:any, stderr:any) => {
+                if (err) {
+                  console.log(err)
+                  throw err
+                }
+                //console.log(`stdout: ${stdout}`);
+                //console.log(`stderr: ${stderr}`);
+            })
+            return h.response().code(204)
+        }
+    })
+    
 
     await server.start();
     console.log('Server running on %s', server.info.uri);
