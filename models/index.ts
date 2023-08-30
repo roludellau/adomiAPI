@@ -24,6 +24,10 @@ try {
   else {
     sequelize = new Sequelize(config.database, config.username, config.password, config);
   }
+  sequelize.authenticate()
+    .then(() => console.log("authentication success"))
+    .catch((err:any) => console.log("authentication failed after 'new Sequelize': ", err))
+
 } catch (err){
     console.log(err)
     throw err

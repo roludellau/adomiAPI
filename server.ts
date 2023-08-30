@@ -36,7 +36,10 @@ const init = async () => {
 
     server.ext('onRequest', async (r: Request, h :ResponseToolkit) => {
         try {await sequelize.authenticate()}
-        catch {return boom.serverUnavailable('Le serveur de bdd ne répond pas')}
+        catch (err) {
+            console.log("err at db ping : ", err)
+            return boom.serverUnavailable('Le serveur de bdd ne répond pas')
+        }
         return h.continue
     })
 
