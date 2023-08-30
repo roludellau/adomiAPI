@@ -19,8 +19,8 @@ import UserRolesController from './controllers/userRolesController';
 const init = async () => {
 
     const server = Hapi.server({
-        port: 8000,
-        host: 'localhost',
+        port: 80,
+        host: 'adomi-api.onrender.com',
         routes: {
             cors: {
                 origin: ['*'],
