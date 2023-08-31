@@ -28,26 +28,27 @@ export default class CarerController {
     }
 
    static createCarer = async (req: Request, h: ResponseToolkit) => {
-        if (await User.findOne({where:{last_name: req.query.last_name, first_name: req.query.first_name}})){
-            return boom.conflict('Un utilisateur de ce nom existe déjà')
+        try {
+            const previous = await User.findOne({ where: { last_name: req.query.last_name, first_name: req.query.first_name }})
+            if (previous) return boom.conflict('Un utilisateur de ce nom existe déjà')
+
+            let payload: typeof User = {...req.query}
+            payload.password = await argon2.hash(payload.password)
+            payload.id_role = '3' //toujours
+            payload.user_name = validator.escape(payload.user_name as string)
+            payload.first_name = validator.escape(payload.first_name as string)
+            payload.last_name = validator.escape(payload.last_name as string)
+            payload.street_name = validator.escape(payload.street_name as string)
+            payload.city = validator.escape(payload.city as string)
+
+            let newCarer = await User.create(payload)
+
+            return h.response({ ...newCarer.dataValues, password: '' }).code(201)  //pourpakivoi
         }
-
-        let payload: typeof User = {...req.query}
-        payload.password = await argon2.hash(payload.password)
-        payload.id_role = '3' //toujours
-        payload.user_name = validator.escape(payload.user_name as string)
-        payload.first_name = validator.escape(payload.first_name as string)
-        payload.last_name = validator.escape(payload.last_name as string)
-        payload.street_name = validator.escape(payload.street_name as string)
-        payload.city = validator.escape(payload.city as string)
-
-        let newCarer = await User.create(payload)
-            .then((res: UserAttributes) => { return { ...res, password: '' } }) //pourpakivoi
-            .catch((err:Error) => {
-                return boom.badData('Les données fournies sont probablement mal formatées.')
-            })
-        
-        return newCarer
+        catch(err){
+            console.log(err)
+            return boom.boomify(err as Error)
+        }
    }
 
 
