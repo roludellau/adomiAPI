@@ -2,10 +2,11 @@ import { Request, ResponseToolkit } from "hapi";
 import argon2 from 'argon2';
 import boom from '@hapi/boom'
 import { UserAttributes } from '../models/user'
-import Sequelize, { Error } from "sequelize";
+import Sequelize, { Error, ValidationError, ValidationErrorItem} from "sequelize";
+import ValidationUtils from "./validationUtils";
 import validator from "validator";
 import moment from "moment";
-const Op = Sequelize.Op
+const { Op } = require("sequelize");
 
 const db = require('../models/index')
 const sequelize = db.default.sequelize
@@ -28,26 +29,34 @@ export default class CarerController {
     }
 
    static createCarer = async (req: Request, h: ResponseToolkit) => {
-        try {
-            const previous = await User.findOne({ where: { last_name: req.query.last_name, first_name: req.query.first_name }})
-            if (previous) return boom.conflict('Un utilisateur de ce nom existe déjà')
+        const valid = new ValidationUtils()
+        if (!req.payload){
+            return boom.badRequest("Veuillez fournir le corps de la requête")
+        }
+        const payload = { ... ( req.payload as typeof User) } 
 
-            let payload: typeof User = {...req.query}
-            payload.password = await argon2.hash(payload.password)
+        try {
+            const previous = await User.findOne({ 
+                where: {
+                    [Op.or]: [
+                        { user_name: ( payload.user_name ?? '') },
+                        { email: ( payload.email ?? '') } 
+                    ]   
+                }   
+            })
+            if (previous) return boom.conflict('Un utilisateur avec ce nom ou cet email existe déjà')
+
             payload.id_role = '3' //toujours
-            payload.user_name = validator.escape(payload.user_name as string)
-            payload.first_name = validator.escape(payload.first_name as string)
-            payload.last_name = validator.escape(payload.last_name as string)
-            payload.street_name = validator.escape(payload.street_name as string)
-            payload.city = validator.escape(payload.city as string)
+            payload.password = await argon2.hash(payload.password)
+            valid.escapeInputs(payload) // mutated by reference
 
             let newCarer = await User.create(payload)
 
             return h.response({ ...newCarer.dataValues, password: '' }).code(201)  //pourpakivoi
         }
-        catch(err){
-            console.log(err)
-            return boom.boomify(err as Error)
+        catch (err: any) {
+            //console.log(err)
+            return valid.getSequelizeErrors(err, h)
         }
    }
 
