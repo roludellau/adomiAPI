@@ -32,9 +32,9 @@ const init = async () => {
 
     await server.register(Jwt);
     server.auth.strategy('jwt_strategy', 'jwt', jwtParams)
-    //server.auth.default('jwt_strategy'); //marre de cette oppression
+    server.auth.default('jwt_strategy'); 
 
-
+    
     server.ext('onRequest', async (r: Request, h :ResponseToolkit) => {
         try { await sequelize.authenticate() }
         catch (err) {

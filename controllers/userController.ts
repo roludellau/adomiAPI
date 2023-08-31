@@ -35,7 +35,7 @@ export default class UserController {
                 algorithm: 'HS512'
             },
             {
-                ttlSec: 14400 // 4 hours
+                ttlSec: 86400 // 4 hours
             }
         )
         return token
