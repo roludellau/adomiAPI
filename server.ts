@@ -14,14 +14,13 @@ const db = require('./models/index')
 const sequelize = db.default.sequelize
 import boom from '@hapi/boom'
 import UserRolesController from './controllers/userRolesController';
-const { exec } = require('child_process');
 
 
 const init = async () => {
 
     const server = Hapi.server({
-        port: 80,
-        host: '0.0.0.0',
+        port: 8000,
+        host: 'localhost',
         routes: {
             cors: {
                 origin: ['*'],
@@ -32,15 +31,12 @@ const init = async () => {
 
     await server.register(Jwt);
     server.auth.strategy('jwt_strategy', 'jwt', jwtParams)
-    server.auth.default('jwt_strategy'); 
+    //server.auth.default('jwt_strategy'); //marre de cette oppression
 
-    
+
     server.ext('onRequest', async (r: Request, h :ResponseToolkit) => {
-        try { await sequelize.authenticate() }
-        catch (err) {
-            console.log("err at db ping : ", err)
-            return boom.serverUnavailable('Le serveur de bdd ne répond pas')
-        }
+        try {await sequelize.authenticate()}
+        catch {return boom.serverUnavailable('Le serveur de bdd ne répond pas')}
         return h.continue
     })
 
@@ -48,14 +44,12 @@ const init = async () => {
     //TEST
     server.route({
         method: 'GET',
-        path:'/',
+        path:'/test',
         options: {auth: false},
         handler: (request: Request, h :ResponseToolkit) => {
-            return h.response('Oï')
+            return h.response('oui')
         }
     })
-
-    
 
     //USERS
     server.route([
@@ -109,13 +103,7 @@ const init = async () => {
             method:'GET',
             path:'/general-requests',
             handler:EmployeeController.getGeneralRequests
-        }, 
-        {
-            method: 'GET',
-            path: '/general-requests/{id}',
-            handler: EmployeeController.getOneGeneralRequest
         }
-
     ])
 
 
@@ -311,25 +299,6 @@ const init = async () => {
             handler: MissionController.getMissionsByUser
         },
     ])
-
-    // SEED (attention, ne pas seeder à moins d'être en pleine re-init du serveur)
-    server.route({
-        method: 'PUT',
-        path:'/db-seed-all',
-        options: {auth: false},
-        handler: (request: Request, h :ResponseToolkit) => {
-            exec('npx sequelize db:seed:all', (err:any, stdout:any, stderr:any) => {
-                if (err) {
-                  console.log(err)
-                  throw err
-                }
-                //console.log(`stdout: ${stdout}`);
-                //console.log(`stderr: ${stderr}`);
-            })
-            return h.response().code(204)
-        }
-    })
-    
 
     await server.start();
     console.log('Server running on %s', server.info.uri);

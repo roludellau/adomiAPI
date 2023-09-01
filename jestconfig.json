@@ -1,0 +1,4 @@
+{
+    "collectCoverage" : false,
+    "testPathDirs": ["build/tests"]
+}
