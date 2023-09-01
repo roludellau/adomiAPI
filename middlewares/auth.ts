@@ -11,7 +11,7 @@ const jwtParams = {
         sub: false,
         nbf: true,
         exp: true,
-        maxAgeSec: 14400, // 4 hours
+        maxAgeSec: 86400, // 24 hours
         timeSkewSec: 15
     },
     validate: (artifacts:any, request: Request, h: ResponseToolkit) => {

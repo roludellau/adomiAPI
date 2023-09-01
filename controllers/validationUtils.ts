@@ -11,7 +11,7 @@ export default class ValidationUtils {
         "password": true,
     }
 
-    public escapeInputs(input: {[key: string]: string|void}){
+    public escapeInputs(input: {[key: string]: string|void}): void{
         for (const key in input){
             if (this.propertiesToNotEscape[key]) {
                 continue;
@@ -38,4 +38,13 @@ export default class ValidationUtils {
         .code(422)
     }
 
+    public validatePassword(password: string): [boolean, boom.Boom|void] {
+        const regex = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)[\wÀ-ÖØ-öø-ÿ@$!%*#?&µ£~|\-\.]{10,255}$/) // pour char spécial requis, à mettre derrière le 2ème lookahead : (?=.*[@$!%*#?&µ£\.\/\\~|\-])
+
+        if (!password.match(regex)) {
+            return [false, boom.badData('Votre mot de passe doit contenir une lettre, un chiffre, un caractère spécial, et faire au moins 10 caractères')]
+        }
+
+        return [true, undefined]
+    }
 }

@@ -28,12 +28,20 @@ export default class CarerController {
         }
     }
 
-   static createCarer = async (req: Request, h: ResponseToolkit) => {
+    static createCarer = async (req: Request, h: ResponseToolkit) => {
         const valid = new ValidationUtils()
         if (!req.payload){
             return boom.badRequest("Veuillez fournir le corps de la requête")
         }
         const payload = { ... ( req.payload as typeof User) } 
+        if (!payload.password) {
+            return boom.badData('Le champs password n\'a pas été fourni')
+        }
+
+        const [ok, err] = valid.validatePassword(payload.password)
+        if (!ok) {
+            return err
+        }
 
         try {
             const previous = await User.findOne({ 
@@ -58,33 +66,52 @@ export default class CarerController {
             //console.log(err)
             return valid.getSequelizeErrors(err, h)
         }
-   }
+    }
 
 
-   static getCarerById = async (req: Request, h: ResponseToolkit) => {
-        return (
-            await User.findByPk(req.params.id)
-            .then((result: UserAttributes|null) => result )
-            .catch((err: Error) => boom.boomify(err))
-        )
-   }
+    static getCarerById = async (req: Request, h: ResponseToolkit) => {
+            return (
+                await User.findByPk(req.params.id)
+                .then((result: UserAttributes|null) => result )
+                .catch((err: Error) => boom.boomify(err))
+            )
+    }
 
    
-   static updateCarer = async (req: Request, h: ResponseToolkit) => {
-        const payload = req.query
-        payload.user_name = validator.escape(payload.user_name as string)
-        payload.first_name = validator.escape(payload.first_name as string)
-        payload.last_name = validator.escape(payload.last_name as string)
-        payload.street_name = validator.escape(payload.street_name as string)
-        payload.city = validator.escape(payload.city as string)
-        
-        const response = await User.update(payload, {where: {id:req.params.id}})
-              .then((rowsAffected:number) => rowsAffected)
-              .catch(() => { 
-                  return boom.badData('Les données fournies sont probablement mal formatées.')
-              })
-        return response
-    }
+    static updateCarer = async (req: Request, h: ResponseToolkit) => {
+            const valid = new ValidationUtils()
+            const id = req.params.id
+            if (!id || isNaN(parseInt(id))) {
+                return boom.badRequest("Veuillez fournir un entier positif comme id, dans la route")
+            }
+            const payload = req.payload as typeof User
+            if (!payload) {
+                return boom.badRequest("Veuillez fournir le corps de la requête")
+            }
+            if (payload.password){
+                const [ok, err] = valid.validatePassword(payload.password)
+                if (!ok) {
+                    return err
+                }
+            }
+
+            payload.id_role = '3'
+            if (payload.password) payload.password = await argon2.hash(payload.password)
+            valid.escapeInputs(payload) // passed by reference
+            
+            try {
+                const rowsaffected = await User.update(payload, { where: { id: id, id_role: 3 } })
+                if (rowsaffected == 0){
+                    return h.response().code(204)
+                }
+                const updatedCarer = await User.findByPk(id)
+                return h.response({updated_carer: updatedCarer}).code(200)
+            }
+            catch (err: any) {
+                return valid.getSequelizeErrors(err, h)
+            }
+
+        }
 
    
 
@@ -103,12 +130,9 @@ export default class CarerController {
    static addAvailability = async (req: Request, h: ResponseToolkit) => {
         let payload = req.query
         let existing = await Availability.findOne({where:payload})
-                                .then((res: typeof Availability) => res)
-                                .catch((err:Error) => boom.boomify(err))
 
-
-    //Si la dispo existe
-        if (existing){
+    // Check si l'auxiliaire est lié à cette dispo
+        if (existing) {
             const isLinked = await sequelize.query(
                 "SELECT `idCarer`"
                 + " FROM `carer_has_availabilities`"
@@ -123,14 +147,13 @@ export default class CarerController {
             ).then((result:any[]) => result[0])
              .catch(() => boom.serverUnavailable('Erreur à "isLinked" dans "addAvailability"'))
             
-        //Si l'auxiliaire est lié à cette dispo
-            if (isLinked){
+            if (isLinked) {
                 console.log(isLinked)
                 return boom.conflict('L\'auxiliaire a déjà ce créneau associé à son compte')
             }
 
         //S'il n'est pas lié à cette dispo
-            const addLink = await sequelize.query(
+            const addLink = await sequelize.query (
                 "INSERT INTO `carer_has_availabilities` (idCarer, idAvailability)"
                 + " VALUES (:idCarer, :idAvailability)",
                 {
@@ -146,6 +169,8 @@ export default class CarerController {
 
 
     //Crée la dispo et lie le carer
+        const valid = new ValidationUtils()
+        
         const t = await sequelize.transaction()
         try {
             const newAvailability = await Availability.create(payload)
@@ -161,10 +186,9 @@ export default class CarerController {
             )
             return newAvailability
         }
-        catch (err){
-            console.log(err)
-            t.rollback()
-            return boom.badData('Les données fournies sont probablement mal formatées.')
+        catch (err: any) {
+            await t.rollback()
+            return valid.getSequelizeErrors(err, h)
         }
    }
 
