@@ -32,11 +32,11 @@ const init = async () => {
 
     await server.register(Jwt);
     server.auth.strategy('jwt_strategy', 'jwt', jwtParams)
-    server.auth.default('jwt_strategy'); 
+    server.auth.default('jwt_strategy')
 
-    
+
     server.ext('onRequest', async (r: Request, h :ResponseToolkit) => {
-        try { await sequelize.authenticate() }
+        try {await sequelize.authenticate()}
         catch (err) {
             console.log("err at db ping : ", err)
             return boom.serverUnavailable('Le serveur de bdd ne répond pas')
@@ -54,8 +54,6 @@ const init = async () => {
             return h.response('Oï')
         }
     })
-
-    
 
     //USERS
     server.route([
@@ -109,13 +107,12 @@ const init = async () => {
             method:'GET',
             path:'/general-requests',
             handler:EmployeeController.getGeneralRequests
-        }, 
+        },
         {
             method: 'GET',
             path: '/general-requests/{id}',
             handler: EmployeeController.getOneGeneralRequest
         }
-
     ])
 
 
@@ -329,7 +326,6 @@ const init = async () => {
             return h.response().code(204)
         }
     })
-    
 
     await server.start();
     console.log('Server running on %s', server.info.uri);
