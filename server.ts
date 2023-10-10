@@ -15,9 +15,11 @@ const sequelize = db.default.sequelize
 import boom from '@hapi/boom'
 import UserRolesController from './controllers/userRolesController';
 const { exec } = require('child_process');
-
+import startCronJobs from './scheduled/generate_appointments'
 
 const init = async () => {
+
+    startCronJobs()
 
     const server = Hapi.server({
         port: 8000,

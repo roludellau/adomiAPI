@@ -9,13 +9,13 @@ const agencyModel = db.default.Agency
 const customerModel = db.default.User
 const missionModel = db.default.Mission
 const appointmentsModel = db.default.Appointment
+import { AppointmentInterface } from '../models/appointment'
+import ValidationUtils from '../controllers/validationUtils'
 
 export default class AppointmentController {
 
-
     static getAppointments = async(request: Request, h: ResponseToolkit) => {
-
-        try{
+        try {
             const appointments = await appointmentsModel.findAll({ 
                 include: [
                     { 
@@ -45,7 +45,7 @@ export default class AppointmentController {
     static getAppointment = async(request: Request, h: ResponseToolkit) => {
         const id = request.params.id
 
-        try{
+        try {
             const appointments = await appointmentsModel.findOne({
                 where:{id:id},
                 include:[{
@@ -92,7 +92,6 @@ export default class AppointmentController {
         const id = request.params.id
         const input = request.query
 
-
         try{
             const appointment = await appointmentsModel.findOne({where:{id:id}})
             const updatedAppointment = await appointment.update({
@@ -129,6 +128,33 @@ export default class AppointmentController {
         }
     }
 
-    
+    static async no_handler_create_appointment (appt: Partial<AppointmentInterface>) {
+        const val = new ValidationUtils()
+        val.escapeInputs(appt)
+        try {
+            const newAppt = await appointmentsModel.create(appt)
+            return newAppt
+        }
+        catch (err: any) {
+            let errors = val.no_handler_get_sequelize_error(err)
+            errors.forEach((err) => console.error(err))
+        }
+    }
+
+    static async no_handler_get_appointment (idMission: string): Promise<{id: string, date: string} | void | null> {
+        try {
+            const lastAppt = await appointmentsModel.findOne({
+                attributes: ['id', 'date'],
+                where: { idMission: idMission },
+                order: [[ 'date', 'DESC' ]],            
+            })
+            return lastAppt
+        }
+        catch (err: any) {
+            let errors = new ValidationUtils().no_handler_get_sequelize_error(err)
+            errors.forEach((err) => console.error(err))
+            return null
+        }
+    }
 
 }

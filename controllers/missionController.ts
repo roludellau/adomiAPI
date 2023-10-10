@@ -9,7 +9,7 @@ const db = require('../models/index')
 const sequelize = db.default.sequelize
 const missionModel = db.default.Mission
 const customerModel = db.default.customer
-
+import { type MissionInterface } from "../models/mission";
 
 export default class MissionController {
 
@@ -243,6 +243,47 @@ export default class MissionController {
         }
         
         return missions
+    }
+
+
+    static not_handler_get_all_missions = async (filterOption?: {[filter: string]: string}): Promise<MissionInterface[] | []> => {
+        const filter = filterOption?.entries[0][0] || null
+        const value = filterOption?.entries[0][1] || null
+
+        try {
+            let missions = await missionModel.findAll({
+                attributes: ['id', 'startDate', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode','city', 'validated', 'idClient', 'idEmployee'], 
+                include: [
+                    {
+                        association: 'client', 
+                        attributes: [ 'first_name', 'last_name', 'user_name', 'street_name', 'street_number', 'post_code' ,'city' ]
+                    },
+                    {
+                        association: 'carer', 
+                        attributes: [ 'first_name', 'last_name', 'user_name' ]
+                    },
+                    {
+                        association: 'employee', 
+                        attributes: [ 'first_name', 'last_name', 'user_name' ]
+                    },
+                    {
+                        association: 'recurence', 
+                        attributes: [ 'recurence_type']
+                    }
+                ],
+                where: filter && value ? {[filter]: [value]} : {}
+            })
+
+            if (missions.length == 0) {
+                console.log("Aucune mission trouvée. Peut-être vérifiez les filtres")
+            }
+
+            return missions
+        }
+        catch (err) {
+            console.log("err dans not_handler_get_all_missions", err)
+            return []
+        }
     }
 
 }

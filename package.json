@@ -7,7 +7,7 @@
         "dev:serve": "nodemon -e js -w build build/server.js",
         "dev": "run-p dev:*",
         "prod": "tsc -p . && node build/server.js",
-        "test": "jest --watchAll --config=jestconfig"    
+        "test": "jest --watchAll --config=jestconfig"
     },
     "author": "",
     "license": "ISC",
@@ -19,6 +19,7 @@
         "@types/hapi": "^18.0.8",
         "@types/node": "^18.11.18",
         "argon2": "^0.30.3",
+        "cron": "^3.1.0",
         "moment": "^2.29.4",
         "mysql2": "^3.0.1",
         "nodemon": "^2.0.20",

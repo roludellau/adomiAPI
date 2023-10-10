@@ -5,10 +5,24 @@ const {
 } = require('sequelize');
 
 
-
+export type MissionInterface = {
+    id?: string
+    startDate: string
+    startHour: string
+    endHour: string
+    streetName: string
+    streetNumber: number
+    postCode: string
+    city: string
+    validated: boolean
+    recurence?: {
+      recurence_type: string 
+    }
+}
 
 module.exports = (sequelize: any, DataTypes: { INTEGER: any; DATE: any; TIME: any; STRING: any; BOOLEAN: any; }) => {
-  class Mission extends Model {
+
+  class Mission extends Model implements MissionInterface {
 
     startDate!: string
     startHour!: string

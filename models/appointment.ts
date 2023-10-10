@@ -1,135 +1,141 @@
-export {}
+export { }
 // Import the built-in data types
 'use strict';
 const {
-  Model
+	Model
 } = require('sequelize');
+
+export type AppointmentInterface = {
+	date: string
+	startHour: string
+	endHour: string
+	streetName: string
+	streetNumber: number
+	postCode: string
+	city: string
+	idMission: string
+}
 
 module.exports = (sequelize: any, DataTypes: { DATEONLY: any; TIME: any; STRING: any; INTEGER: any; }) => {
 
-  class Appointment extends Model {
-    
-    date!: string
-    startHour!: string
-    endHour!: string 
-    streetName!: string
-    streetNumber!: number
-    postCode!: string
-    city!:string
-    
-    static associate(models: any) {
-      Appointment.belongsTo(models.User, {
-        as: 'carer',
-        foreignKey: 'idCarer'
-      })
-      Appointment.belongsTo(models.Mission, {
-        as: 'mission',
-        foreignKey: 'idMission'
-      })
-    }
-  }
-  
-  Appointment.init({
-    date: {
-      type: DataTypes.DATEONLY,
-      allowNull: false,
-      validate:{
+	class Appointment extends Model implements AppointmentInterface {
 
-        isDate: true,
-        notNull: {
-          msg: "Veuillez renseigner une date"
-        }
+		date!: string
+		startHour!: string
+		endHour!: string
+		streetName!: string
+		streetNumber!: number
+		postCode!: string
+		city!: string
+		idMission!: string
 
-      }
-    },
+		static associate(models: any) {
+			Appointment.belongsTo(models.User, {
+				as: 'carer',
+				foreignKey: 'idCarer'
+			})
+			Appointment.belongsTo(models.Mission, {
+				as: 'mission',
+				foreignKey: 'idMission'
+			})
+		}
+	}
 
-    startHour: {
+	Appointment.init({
+		date: {
+			type: DataTypes.DATEONLY,
+			allowNull: false,
+			validate: {
+				isDate: true,
+				notNull: {
+					msg: "Veuillez renseigner une date"
+				}
+			}
+		},
 
-      type: DataTypes.TIME,
-      allowNull: false,
-      validate:{
+		startHour: {
+			type: DataTypes.TIME,
+			allowNull: true,
+			validate: {
+				isNumeric: true,
+			}
+		},
 
-        isNumeric: true,
-        notNull: {
-          msg: "Veuillez inidquer l'heure de début"
-        }
-      }
-    }, 
-    
-    endHour: {
-      type: DataTypes.TIME,
-      allowNull: false,
+		endHour: {
+			type: DataTypes.TIME,
+			allowNull: true,
+			validate: {
+				isNumeric: true,
+			}
+		},
 
-      validate:{
-        isNumeric: true,
-        notNull: {
-          msg: "Veuillez inidquer l'heure de fin"
-        }
-      }
-    },
+		streetName: {
+			type: DataTypes.STRING,
+			allowNull: true,
+			validate: {
+				isAlpha: {
+					msg: "Veuillez indiquer un nom de rue valide"
+				},
+			}
+		},
 
-    streetName: {
+		streetNumber: {
+			type: DataTypes.INTEGER,
+			allowNull: true,
+			validate: {
+				isNumeric: {
+					msg: "Indiquer un numéro valide",
+				},
+			}
+		},
 
-      type: DataTypes.STRING,
-      allowNull: false,
+		postCode: {
+			type: DataTypes.STRING,
+			allowNull: true,
+			validate: {
+				isNumeric: {
+					msg: "Indiquer un code postal valide"
+				},
+				len: {
+					args: [5, 5],
+					msg: "Code postal à 5 chiffres !"
+				}
+			}
+		},
 
-      validate:{
-        isAlpha:{
-          msg: "Veuillez indiquer un nom de rue valide"
-        },
-        notNull: {
-          msg: "Veuillez renseigner un nom de rue"
-        },
-      }
-    },
-    streetNumber:{
+		city: {
+			type: DataTypes.STRING,
+			allowNull: true,
+			validate: {
+			}
+		},
 
-      type:  DataTypes.INTEGER,
-      allowNull: false, 
+		idCarer: {
+			type: DataTypes.INTEGER,
+			validate : {
+                isNumeric: {
+                    msg:"Veuillez entrer un id numérique pour le carer lié à ce rdv."
+                }
+			}
+		},
 
-      validate:{
-      isNumeric: {
-          msg: "Indiquer un numéro valide",
-        },
-        notNull: {
-          msg: "Veuillez renseigner un numéro de rue"
-        },
-      }
-    },
+		idMission: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			validate: {
+				notNull: {
+					msg: "Veuillez indiquer un id de mission"
+				}
+			}
+		}
 
-    postCode: {
-      
-      type: DataTypes.STRING,
-      allowNull: false,
+	},
+		{
+			sequelize,
+			modelName: 'Appointment',
+			tableName: 'appointments',
+			timestamps: false
+		});
 
-      validate:{
-
-        isNumeric: {
-          msg: "Indiquer un code postal valide"
-        },
-        len:{
-          args:[5, 5],
-          msg: "Code postal à 5 chiffres !"
-        }
-      }
-
-    },
-    city: {
-      type: DataTypes.STRING,
-      allowNull: false,
-
-      validate:{
-        
-        notNull: {
-          msg: "Veuillez indiquer une ville"
-        }
-      }
-    }
-  }, {
-    sequelize,
-    modelName: 'Appointment',
-    tableName: 'appointments',
-    timestamps: false
-  });
-  return Appointment;
+	return Appointment;
 };
