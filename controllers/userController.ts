@@ -95,7 +95,6 @@ export default class UserController {
                     {
                         association: 'role',
                         attributes:['label'],
-                        where:{label:'employee'}
                     },
                     {
                         association:'agency',

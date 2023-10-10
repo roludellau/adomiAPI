@@ -20,7 +20,7 @@ const { exec } = require('child_process');
 const init = async () => {
 
     const server = Hapi.server({
-        port: 80,
+        port: 8000,
         host: '0.0.0.0',
         routes: {
             cors: {
