@@ -39,20 +39,25 @@ async function generate_appointments() {
                 dates.push(d.toISOString())
             }
         }
-        
-        dates.forEach(async (date) => {
-            setTimeout ( async () => { // timeout de 0.7 sec pour ne pas surcharger le serveur
-                const newAppt = await appointmentController.no_handler_create_appointment({
-                    date: date,
-                    idMission: mission.id
-                })
-                console.log("newAppt n° "+index+'\n', newAppt.dataValues)
-            }, 700)
+
+        dates.forEach(async (date, i) => {
+            const newAppt = await appointmentController.no_handler_create_appointment({
+                date: date,
+                idMission: mission.id
+            })
+            console.log("newAppt n° "+index+'\n', newAppt.dataValues)
         })
     })
+
+    return 'done'
 }
 
-export default function startCronJobs(): void {
+export default async function startCronJobs(): Promise<void> {
+    let machin = await generate_appointments()
+    machin = await generate_appointments()
+    machin = await generate_appointments()
+    machin = await generate_appointments()
+ 
     const job = new CronJob (
         '1 0 * * mon', // 00:01 of every monday
         generate_appointments,
