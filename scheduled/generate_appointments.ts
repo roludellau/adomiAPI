@@ -12,14 +12,17 @@ async function generate_appointments() {
         //const missionWeekDay = new Date(mission.startDate).getDay()
         const lastAppointment = await appointmentController.no_handler_get_appointment(mission.id!)
         if (!lastAppointment) {
-            dates.push(new Date(mission.startDate).toISOString())
+            const d = new Date(mission.startDate)
+            dates.push(d.toISOString())
+            if (recurence === "weekly") {
+                d.setDate(d.getDate() + 7)
+                dates.push(d.toISOString())
+            }
         }
         else {
             if (recurence === "weekly") {
-                // Create an appointment for 7 days after, and again
+                // Create an appointment for 7 days after
                 const d = new Date(lastAppointment.date)
-                d.setDate(d.getDate() + 7)
-                dates.push(d.toISOString())
                 d.setDate(d.getDate() + 7)
                 dates.push(d.toISOString())
             }
@@ -50,6 +53,7 @@ async function generate_appointments() {
 }
 
 export default function startCronJobs(): void {
+    //for (let i = 0; i < 4; i++) { generate_appointments() }
     const job = new CronJob (
         '1 0 * * mon', // 00:01 of every monday
         generate_appointments,

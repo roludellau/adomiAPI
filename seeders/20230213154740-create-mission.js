@@ -32,7 +32,24 @@ module.exports = {
         idCarer: 3,
         idRecurence: 2
       },
+
+/** New, more recent mission for John, Edouard, and Marie */
+      {
+        startDate: '2023-10-03 00:00:00',
+        startHour: '10:15:00',
+        endHour: '11:15:00',
+        streetName: null,
+        streetNumber: null,
+        postCode: null,
+        city: null,
+        validated: true,
+        idClient: 1,
+        idEmployee: 2,
+        idCarer: 3,
+        idRecurence: 1
+      },
 /** */
+
       {
         startDate: '2023-08-24 00:00:00',
         startHour: '13:30:00',

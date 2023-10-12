@@ -14,6 +14,7 @@ export type AppointmentInterface = {
 	postCode: string
 	city: string
 	idMission: string
+	[key: string]: (string | number | {[key:string]:string})
 }
 
 module.exports = (sequelize: any, DataTypes: { DATEONLY: any; TIME: any; STRING: any; INTEGER: any; }) => {

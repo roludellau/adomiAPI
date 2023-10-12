@@ -6,6 +6,9 @@ import Sequelize, { Error, ValidationError, ValidationErrorItem} from "sequelize
 import ValidationUtils from "./validationUtils";
 import validator from "validator";
 import moment from "moment";
+import { type AppointmentInterface} from '../models/appointment'
+import { type MissionInterface} from '../models/mission'
+
 const { Op } = require("sequelize");
 
 const db = require('../models/index')
@@ -14,6 +17,7 @@ const User = db.default.User
 const Availability = db.default.Availability
 const Mission = db.default.Mission
 const Appointment = db.default.Appointment
+
 
 export default class CarerController {
    
@@ -280,81 +284,85 @@ export default class CarerController {
          .catch((err: Error) => { console.log(err); return err })
     }
 
+
     static getAppointments = async (req: Request, h: ResponseToolkit) => {
-        const appointments:any[] = await Appointment.findAll(
-            {
-                attributes: ['id', 'idMission', 'date', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode', 'city'],
-                where: {idCarer: req.params.id},
-                include: {
-                    association: 'mission',
-                    attributes: ['idClient', 'idRecurence'],
-                    include:{
-                        association:'client',
-                        attributes: ['first_name', 'last_name'],
-                    }
-                },
-                order: [
-                    ['date', 'DESC'],
-                    ['startHour', 'ASC']
-                ]
-            }
-        ).then((res: typeof Appointment[]) => res)
-         .catch((err: Error) => { console.log(err); return err })
 
-        //appt : appointment
-        //Pour chaque rdv: retire les champs nulls, les note, va les chercher dans la table d'après 
-        const completeInfo = await Promise.all(
-            appointments.map(async (appt) => {
-                //Verif des champs d'appointments
-                let nullInfo = []
-                let info = appt.dataValues
-                for (const prop in info){
-                    if (info[prop] == null){
-                        nullInfo.push(prop)
-                        delete info[prop]
-                    }
-                }
-                if (nullInfo.length == 0){
-                    return new Promise((resolveFunc) => {
-                        resolveFunc(appt)
-                    })
-                }
+        const camelToSnake: {[key:string]: string} = {
+            "streetName": "street_name",
+            "streetNumber": "street_number",
+            "postCode": "post_code",    
+        }
 
-                //Fetch mission
-                const infoFromMission = await Mission.findByPk(info.idMission, { attributes: nullInfo })
-                    .then((info: typeof Mission) => info)
-                    .catch((err:Error) => console.log(err))
-                //Verif des champs de missions
-                info = {... info, ... infoFromMission.dataValues}
-                nullInfo = []
-                for (const prop in info){
-                    if (info[prop] == null){
-                        nullInfo.push(prop)
-                        delete info[prop]
-                    }
-                }
-                if (nullInfo.length == 0){
-                    appt.dataValues = {... appt.dataValues, ... info}
-                    return new Promise((resolveFunc) => {
-                        resolveFunc(appt)
-                    })
-                }
-
-                //Fetch customer
-                const infoFromCustomer = await User.findByPk(info.idClient, { attributes: nullInfo })
-                .then((info: typeof User) => info)
-                .catch((err:Error) => console.log(err))
-                appt.dataValues = {... appt.dataValues, ... info, ... infoFromCustomer.dataValues}
-
-                return new Promise((resolveFunc) => {
-                    resolveFunc(appt)
-                })
+        const missions = await Mission.findAll ({
+                //attributes: ['id', 'idMission', 'date', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode', 'city'],
+                where: {idCarer: req.params.id}, // and {validated: true}
             })
-        )
-        
-        
-       return completeInfo
+        .catch((err: Error) => { console.log(err); return null })
+
+        if (!missions) return boom.badImplementation()
+        if (missions.length === 0)  return []
+
+        let appointments: AppointmentInterface [] = []
+
+        for (const mission of missions) {
+            const appts = await Appointment.findAll (
+                {
+                    attributes: ['id', 'idMission', 'date', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode', 'city'],
+                    where: {idMission: mission.id}, 
+                    include: {
+                        association:'mission',
+                        attributes: ['id', 'startDate', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode', 'city', 'validated', 'idEmployee'],
+                        include: {
+                            association:'client',
+                            attributes: ['first_name', 'last_name', 'street_name', 'street_number', 'post_code', 'city'],
+                        }
+                    },
+                    order: [
+                        ['date', 'DESC'],
+                        ['startHour', 'ASC']
+                    ]
+                }
+            )
+            //console.log("ONE MISSIONS APPTS /", appts)
+            appointments = [...appointments, ...appts]
+        }
+
+        appointments.sort((a, b) => a.date > b.date ? -1 : +1)
+
+        try {
+            appointments.forEach ( (a) => {
+                let mission = a.mission as any
+                let client = mission.client as any
+                a = a.dataValues as AppointmentInterface
+
+                let isThereNullField = false
+                for (const field in a) {
+                    if (a[field] === null) isThereNullField = true
+                    console.log(field + " " + a[field])
+                }
+                if (!isThereNullField) return
+                
+                isThereNullField = false
+                for (const field in a) {
+                    if (a[field] === null) a[field] = mission[field]
+                    if (a[field] === null) isThereNullField = true
+                }
+                if (!isThereNullField) return
+
+                for (const field in a) {
+                    if (a[field] === null) a[field] = client[camelToSnake[field] || field]
+                }
+            })
+
+            return appointments
+        }
+        catch(eur) {
+            console.log(eur)
+            return boom.badImplementation()
+        }
     }
+
+
 
     static carerSearch = async (req: Request, h: ResponseToolkit) => {
         const query = req.query?.q
