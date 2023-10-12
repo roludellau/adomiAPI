@@ -53,11 +53,6 @@ async function generate_appointments() {
 }
 
 export default async function startCronJobs(): Promise<void> {
-    let machin = await generate_appointments()
-    machin = await generate_appointments()
-    machin = await generate_appointments()
-    machin = await generate_appointments()
- 
     const job = new CronJob (
         '1 0 * * mon', // 00:01 of every monday
         generate_appointments,
