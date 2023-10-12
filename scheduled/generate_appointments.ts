@@ -53,7 +53,7 @@ async function generate_appointments() {
 }
 
 export default function startCronJobs(): void {
-    //for (let i = 0; i < 4; i++) { generate_appointments() }
+    for (let i = 0; i < 4; i++) { generate_appointments() }
     const job = new CronJob (
         '1 0 * * mon', // 00:01 of every monday
         generate_appointments,
