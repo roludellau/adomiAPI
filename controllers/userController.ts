@@ -122,12 +122,14 @@ export default class UserController {
             const message = payload.message
             if (!message) return boom.badRequest('veuillez fournir un payload JSON contenant un attribut "message".')
     
-            sequelize.query('INSERT INTO `general_requests` (request_string, user_id) VALUES ($1, $2)', 
+            const res = await sequelize.query('INSERT INTO `general_requests` (request_string, user_id) VALUES ($1, $2)', 
                 {
                     bind: [message, id],
-                    type: sequelize.POST
                 }
             )
+
+            console.log('res', res)
+
             return h.response().code(201)    
         }
         catch(eur) {
