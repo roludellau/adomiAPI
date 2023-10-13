@@ -108,7 +108,7 @@ export default class MissionController {
 
             let mission = await missionModel.findOne(
             {attributes: [
-                'id','startdate','startHour', 'endHour', 'streetName', 'streetNumber', 'postCode','city', 'validated', 'idClient', 'idEmployee','idCarer'],
+                'id','startDate','startHour', 'endHour', 'streetName', 'streetNumber', 'postCode', 'city', 'validated', 'idClient', 'idEmployee','idCarer'],
             where:{
                 id: idMission
             }, 
