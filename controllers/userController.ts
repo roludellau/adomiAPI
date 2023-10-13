@@ -7,6 +7,7 @@ const db = require('../models/index')
 import {Error} from "sequelize";
 const sequelize = db.default.sequelize
 const userModel = db.default.User
+import ValidationUtils from './validationUtils'
 
 export default class UserController {
 
@@ -107,6 +108,31 @@ export default class UserController {
         catch (err) {
             console.log(err)
             throw err
+        }
+    }
+
+    static async postGeneralRequest(request: Request, h: ResponseToolkit) {
+        try {
+            const id = request.params.id
+            if (!id) return boom.badRequest('veuillez fournir l\'id de l\'utilisateur dans l\'url.')
+    
+            const payload = (request.payload as {[key: string]: string})
+            new ValidationUtils().escapeInputs(payload) // passed by reference
+    
+            const message = payload.message
+            if (!message) return boom.badRequest('veuillez fournir un payload JSON contenant un attribut "message".')
+    
+            sequelize.query('INSERT INTO `general_requests` (request_string, user_id) VALUES ($1, $2)', 
+                {
+                    bind: [message, id],
+                    type: sequelize.POST
+                }
+            )
+            return h.response().code(201)    
+        }
+        catch(eur) {
+            console.log(eur)
+            return boom.badImplementation()
         }
     }
 

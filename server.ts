@@ -69,7 +69,13 @@ const init = async () => {
             method: 'GET',
             path: '/users/{id}',
             handler: UserController.getUserInfo
+        },
+        {
+            method: 'POST',
+            path: '/users/{id}/general-request',
+            handler: UserController.postGeneralRequest
         }
+
     ])
 
 
@@ -119,11 +125,18 @@ const init = async () => {
 
 
     //AGENCIES
-    server.route({
-        method:'GET',
-        path:'/agencies',
-        handler: AgencyController.getAllAgencies
-    })
+    server.route([
+        {
+            method:'GET',
+            path:'/agencies',
+            handler: AgencyController.getAllAgencies
+        },
+        {
+            method:'GET',
+            path:'/users/{id}/agency',
+            handler: AgencyController.getUserAgency
+        }
+    ])
 
     //ROLES
     server.route({

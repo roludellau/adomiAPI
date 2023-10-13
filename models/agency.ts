@@ -18,11 +18,16 @@ module.exports = (sequelize: any, DataTypes: { STRING: any; }) => {
 
     name!:string;
     adress!:string;
+    /*
     static associate(models: any) {
-      // define association here
-      Agency.belongsToMany(models.User, {through:'Agency_employee'})
+        Agency.belongsTo(models.User, {
+            through: 'user_agencies'
+        })
     }
+    */
+
   }
+
   Agency.init({
     name: DataTypes.STRING,
     adress: DataTypes.STRING
