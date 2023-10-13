@@ -256,7 +256,6 @@ export default class CarerController {
         const month = (mm<10)? "0" + mm : mm;
         
         const today = moment(yy + "-" + month + "-" + day, "YYYY-MM-DD").format("YYYY-MM-DD");
-        console.log(today)
         const tomorrow = moment(yy + "-" + month + "-" + day2, "YYYY-MM-DD").format("YYYY-MM-DD");
 
         return await Appointment.findAll(
@@ -286,6 +285,13 @@ export default class CarerController {
 
 
     static getAppointments = async (req: Request, h: ResponseToolkit) => {
+        let carerId = req.params.id
+        
+        const sixMonthAgo = () => {
+            let d = new Date()
+            d.setMonth(d.getMonth() - 6)
+            return d.toISOString()
+        }
 
         const camelToSnake: {[key:string]: string} = {
             "streetName": "street_name",
@@ -293,22 +299,32 @@ export default class CarerController {
             "postCode": "post_code",    
         }
 
-        const missions = await Mission.findAll ({
-                //attributes: ['id', 'idMission', 'date', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode', 'city'],
-                where: {idCarer: req.params.id}, // and {validated: true}
-            })
-        .catch((err: Error) => { console.log(err); return null })
+        let appointments: AppointmentInterface[] = await Appointment.findAll (
+            {
+                attributes: ['id', 'idMission', 'date', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode', 'city'],
+                where: [{ idCarer: carerId, date: {[Op.gt]: sixMonthAgo()} }], 
+                include: {
+                    association:'mission',
+                    attributes: ['id', 'startDate', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode', 'city', 'validated', 'idEmployee'],
+                    include: {
+                        association:'client',
+                        attributes: ['first_name', 'last_name', 'street_name', 'street_number', 'post_code', 'city'],
+                    }
+                },
+                order: [
+                    ['date', 'DESC'],
+                    ['startHour', 'ASC']
+                ]
+            }
+        )
 
-        if (!missions) return boom.badImplementation()
-        if (missions.length === 0)  return []
-
-        let appointments: AppointmentInterface [] = []
+        const missions = await Mission.findAll ({where: {idCarer: req.params.id}, /* and {validated: true}*/})
 
         for (const mission of missions) {
             const appts = await Appointment.findAll (
                 {
                     attributes: ['id', 'idMission', 'date', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode', 'city'],
-                    where: {idMission: mission.id}, 
+                    where: [{ idMission: mission.id, date: {[Op.gt]: sixMonthAgo()} }], 
                     include: {
                         association:'mission',
                         attributes: ['id', 'startDate', 'startHour', 'endHour', 'streetName', 'streetNumber', 'postCode', 'city', 'validated', 'idEmployee'],
@@ -338,7 +354,7 @@ export default class CarerController {
                 let isThereNullField = false
                 for (const field in a) {
                     if (a[field] === null) isThereNullField = true
-                    console.log(field + " " + a[field])
+                    //console.log(field + " " + a[field])
                 }
                 if (!isThereNullField) return
                 
