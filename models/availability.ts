@@ -1,7 +1,7 @@
 'use strict';
 import { HasMany, Model } from 'sequelize';
 
-interface availabilitiesAttributes{
+export interface availabilitiesAttributes {
   week_day:number,
   start_hour:Date,
   end_hour:Date

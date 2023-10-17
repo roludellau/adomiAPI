@@ -105,7 +105,6 @@ export default class MissionController {
 
         try {
 
-
             let mission = await missionModel.findOne(
             {attributes: [
                 'id','startDate','startHour', 'endHour', 'streetName', 'streetNumber', 'postCode', 'city', 'validated', 'idClient', 'idEmployee','idCarer'],

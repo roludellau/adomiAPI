@@ -8,6 +8,7 @@ import validator from "validator";
 import moment from "moment";
 import { type AppointmentInterface} from '../models/appointment'
 import { type MissionInterface} from '../models/mission'
+import {type availabilitiesAttributes } from '../models/availability'
 
 const { Op } = require("sequelize");
 
@@ -132,8 +133,22 @@ export default class CarerController {
 
 
    static addAvailability = async (req: Request, h: ResponseToolkit) => {
-        let payload = req.query
-        let existing = await Availability.findOne({where:payload})
+        let payload = req.payload as availabilitiesAttributes
+        if (!payload || !payload.week_day || !payload.start_hour || !payload.end_hour) {
+            return boom.badRequest("Veuillez fournir un payload avec les champs 'week_day', 'start_hour', 'end_hour'.")
+        }
+
+        const valid = new ValidationUtils()
+
+        let existing = await Availability.findOne({where:payload}).catch((err: ValidationError) =>  valid.no_handler_get_sequelize_error(err))
+        if (Array.isArray(existing)){
+            return h.response({
+                statusCode: 422,
+                statusName: "Unprocessable Entity",
+                errors: existing
+            })
+            .code(422)
+        }
 
     // Check si l'auxiliaire est lié à cette dispo
         if (existing) {
@@ -173,7 +188,6 @@ export default class CarerController {
 
 
     //Crée la dispo et lie le carer
-        const valid = new ValidationUtils()
         
         const t = await sequelize.transaction()
         try {
@@ -243,7 +257,7 @@ export default class CarerController {
     }
 
     static getLatestAppointments = async (req: Request, h: ResponseToolkit) => {
-
+        
         const date = new Date();
 
         let dd = date.getDate();
