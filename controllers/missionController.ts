@@ -5,6 +5,7 @@ import boom from '@hapi/boom'
 import * as fs from 'fs/promises';
 import { exit } from "process";
 import validator from "validator";
+import ValidationUtils from "./validationUtils";
 const db = require('../models/index')
 const sequelize = db.default.sequelize
 const missionModel = db.default.Mission
@@ -15,42 +16,12 @@ export default class MissionController {
 
 
     static createMission = async (request: Request, h: ResponseToolkit)=>{
-        const formData = request.payload as any
-
+        const formData = typeof request.payload == "string" ? JSON.parse(request.payload) : request.payload as any
+        const valou = new ValidationUtils()
+        valou.escapeInputs(formData)
         try {
-            const create =  await missionModel.create({
-                startDate: formData.startDate,
-                startHour: formData.startHour,
-                endHour: formData.endHour,
-                streetName: validator.escape(formData.streetName),
-                streetNumber: formData.streetNumber,
-                postCode: formData.postCode,
-                city: validator.escape(formData.city),
-                validated: formData.validated,
-                idClient: formData.idClient,
-                idEmployee: formData.idEmployee,
-                idCarer: formData.idCarer,
-                idRecurence: formData.idRecurence
-            });
-
-            // const create =  await missionModel.create({
-            //     startDate: request.query.startDate,
-            //     startHour: request.query.startHour,
-            //     endHour: request.query.endHour,
-            //     streetName: request.query.streetName,
-            //     streetNumber: request.query.streetNumber,
-            //     postCode: request.query.postCode,
-            //     city: request.query.city,
-            //     validated: request.query.validated,
-            //     idClient: request.query.idClient,
-            //     idEmployee: request.query.idEmployee,
-            //     idCarer: request.query.idCarer,
-            //     idRecurence: request.query.idRecurence
-    
-            // });
-
+            const create =  await missionModel.create(formData);
             return create
-
         }
         catch(err){
             console.log(err);
