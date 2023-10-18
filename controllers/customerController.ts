@@ -138,7 +138,6 @@ export default class CustomerController {
             return boom.badData('Le corps de la requête doit être un objet JSON')
         }
 
-        console.log("passe dans createCustomer")
 
         let info = request.payload as any
 
@@ -171,18 +170,19 @@ export default class CustomerController {
             return createdUser
         }
         catch (error: any) {
-            if (error?.errors){
-                type ApiError = { message: string, field: string|null }
-                let errorList:ApiError[] = []
-                error.errors.map((item:ValidationErrorItem) => errorList.push({ field: item.path, message: item.message }))
-                return h.response({
-                    statusCode: 422,
-                    statusName: "Unprocessable Entity",
-                    errors: errorList
-                })
-                .code(422)
+            console.log(error)
+            if (!error?.errors) {
+                return boom.badImplementation()
             }
-            else return boom.badImplementation()
+            type ApiError = { message: string, field: string|null }
+            let errorList:ApiError[] = []
+            error.errors.map((item:ValidationErrorItem) => errorList.push({ field: item.path, message: item.message }))
+            return h.response({
+                statusCode: 422,
+                statusName: "Unprocessable Entity",
+                errors: errorList
+            })
+            .code(422)
         }
         
     }
