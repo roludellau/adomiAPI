@@ -6,7 +6,7 @@ const jwtParams = {
     //keys: async () => fs.readFile('../key/key.txt'),
     keys: 'IceTea',
     verify: {
-        aud: 'api.adomi.fr',
+        aud: ['adomi', /(.*localhost.*)/, /(.*adomi.*)/, /(.*)/],
         iss: 'api.adomi.fr',
         sub: false,
         nbf: true,

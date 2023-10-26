@@ -61,11 +61,11 @@ export default class CarerController {
 
             payload.id_role = '3' //toujours
             payload.password = await argon2.hash(payload.password)
-            valid.escapeInputs(payload) // mutated by reference
+            valid.escapeInputs(payload) // par référence
 
             let newCarer = await User.create(payload)
 
-            return h.response({ ...newCarer.dataValues, password: '' }).code(201)  //pourpakivoi
+            return h.response({ ...newCarer.dataValues, password: '' }).code(201)  
         }
         catch (err: any) {
             //console.log(err)
@@ -106,7 +106,7 @@ export default class CarerController {
             
             try {
                 const rowsaffected = await User.update(payload, { where: { id: id, id_role: 3 } })
-                if (rowsaffected == 0){
+                if (rowsaffected == 0) {
                     return h.response().code(204)
                 }
                 const updatedCarer = await User.findByPk(id)
@@ -188,7 +188,6 @@ export default class CarerController {
 
 
     //Crée la dispo et lie le carer
-        
         const t = await sequelize.transaction()
         try {
             const newAvailability = await Availability.create(payload)

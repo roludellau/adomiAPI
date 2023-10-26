@@ -22,11 +22,12 @@ export default class UserController {
         }
     }
     
-    static generateToken(username:string, role:string){
+    static generateToken(username:string, role:string, audience?:string){
         //const key = async () => fs.readFile('../key/key.txt')
+        console.log("token audience : ", audience)
         const token = Jwt.token.generate(
             {
-                aud: 'api.adomi.fr',
+                aud: audience || 'adomi',
                 iss: 'api.adomi.fr',
                 user: username,
                 userRole: role
@@ -45,15 +46,10 @@ export default class UserController {
 
 
     static signIn = async (request: Request, h: ResponseToolkit) => {
-
-        try {await sequelize.authenticate()}
-        catch {return boom.serverUnavailable('Le serveur de bdd ne répond pas')}
-
-        type Payload = {
+        let payload = request.payload as {
             username: string
             password: string
         }
-        let payload = request.payload as Payload
 
         let [username, password] = [payload.username, payload.password]
 
@@ -79,7 +75,7 @@ export default class UserController {
 
         return {
             id: user.id, 
-            token: this.generateToken(username as string, user.role.label)
+            token: this.generateToken(username as string, user.role.label, request.headers["origin"])
         }
     }
 

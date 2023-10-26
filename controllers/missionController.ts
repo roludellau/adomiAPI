@@ -11,21 +11,25 @@ const sequelize = db.default.sequelize
 const missionModel = db.default.Mission
 const customerModel = db.default.customer
 import { type MissionInterface } from "../models/mission";
+import {type ValidationError} from 'sequelize'
 
 export default class MissionController {
 
 
-    static createMission = async (request: Request, h: ResponseToolkit)=>{
+    static createMission = async (request: Request, h: ResponseToolkit) => {
         const formData = typeof request.payload == "string" ? JSON.parse(request.payload) : request.payload as any
-        const valou = new ValidationUtils()
-        valou.escapeInputs(formData)
+        const valid = new ValidationUtils()
+        valid.escapeInputs(formData)
         try {
             const create =  await missionModel.create(formData);
             return create
         }
         catch(err){
-            console.log(err);
-            throw err;
+            if (!(err as any).errs){
+                console.log(err);
+                return boom.badImplementation()
+            }
+            return valid.getSequelizeErrors(err as ValidationError, h)
         }
         
     }
